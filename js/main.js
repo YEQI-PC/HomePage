@@ -17,9 +17,11 @@ const LS = {
   RECENT:     'hp_recent',
   BOOKMARKS:  'hp_bookmarks',
   BG:         'hp_bg',
+  BG_OPTIONS: 'hp_bg_options',
   ENGINE:     'hp_engine',
   CUSTOM_COLORS: 'hp_custom_colors',
   CURSOR_EFFECTS: 'hp_cursor_effects',
+  WIDGET_VISIBILITY: 'hp_widget_visibility',
 };
 
 const ENGINES = {
@@ -912,20 +914,36 @@ const Background = (() => {
     btn.innerHTML = '<span class="spinning">↻</span> 加载中…';
     btn.disabled = true;
 
-    // Attempt up to 3 times to handle transient rate-limits or network errors
-    const MAX_RETRIES = 3;
+    // Multiple API endpoints to try in case one fails
+    const API_ENDPOINTS = [
+      { url: 'https://api.waifu.pics/sfw/waifu', type: 'waifu.pics' },
+      { url: 'https://api.waifu.im/search/?included_tags=waifu&is_nsfw=false', type: 'waifu.im' },
+      { url: 'https://nekos.best/api/v2/neko', type: 'nekos.best' }
+    ];
+
     let lastErr;
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    for (const endpoint of API_ENDPOINTS) {
       try {
-        // Use CORS proxy to avoid tainted canvas issues
-        const res = await fetch('https://api.waifu.pics/sfw/waifu', {
+        const res = await fetch(endpoint.url, {
           signal: AbortSignal.timeout(10000),
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const { url } = await res.json();
+        const data = await res.json();
+
+        // Extract URL based on API structure
+        let imageUrl;
+        if (endpoint.type === 'waifu.pics') {
+          imageUrl = data.url;
+        } else if (endpoint.type === 'waifu.im') {
+          imageUrl = data.images?.[0]?.url;
+        } else if (endpoint.type === 'nekos.best') {
+          imageUrl = data.results?.[0]?.url;
+        }
+
+        if (!imageUrl) throw new Error('No image URL in response');
 
         // Fetch image as blob → data URL so Canvas sampling works (avoids taint)
-        const imgRes = await fetch(url, {
+        const imgRes = await fetch(imageUrl, {
           signal: AbortSignal.timeout(15000),
           mode: 'cors'
         });
@@ -933,20 +951,19 @@ const Background = (() => {
         const blob    = await imgRes.blob();
         const dataUrl = await blobToDataURL(blob);
         applyBg(dataUrl, '动漫壁纸');
+        setStatus('加载成功');
         lastErr = null;
         break;
       } catch (err) {
         lastErr = err;
-        if (attempt < MAX_RETRIES) {
-          setStatus(`重试中 (${attempt}/${MAX_RETRIES})…`);
-          await new Promise(r => setTimeout(r, 800 * attempt));
-        }
+        console.warn(`Failed to fetch from ${endpoint.type}:`, err);
+        // Continue to next API
       }
     }
 
     if (lastErr) {
       setStatus('加载失败，请稍后重试');
-      console.error('Background fetch error:', lastErr);
+      console.error('All background APIs failed:', lastErr);
     }
     btn.innerHTML = origText;
     btn.disabled = false;
@@ -1053,11 +1070,55 @@ const SettingsPanel = (() => {
       if (e.key === 'Escape') close();
     });
 
+    // Initialize preset themes
+    initPresetThemes();
+
     // Initialize color pickers
     initColorPickers();
 
     // Initialize cursor effects toggle
     initCursorEffectsToggle();
+  }
+
+  function initPresetThemes() {
+    const presetBtns = $$('.theme-preset');
+    const primaryPicker = $('#primary-color-picker');
+    const accentPicker = $('#accent-color-picker');
+
+    // Mark active preset based on current colors
+    function updateActivePreset() {
+      const currentPrimary = primaryPicker.value.toLowerCase();
+      const currentAccent = accentPicker.value.toLowerCase();
+
+      presetBtns.forEach(btn => {
+        const presetPrimary = btn.dataset.primary.toLowerCase();
+        const presetAccent = btn.dataset.accent.toLowerCase();
+
+        if (presetPrimary === currentPrimary && presetAccent === currentAccent) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Apply preset theme when clicked
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const primary = btn.dataset.primary;
+        const accent = btn.dataset.accent;
+
+        primaryPicker.value = primary;
+        accentPicker.value = accent;
+
+        applyCustomColors(primary, accent);
+        lsSet(LS.CUSTOM_COLORS, { primary, accent });
+        updateActivePreset();
+      });
+    });
+
+    // Update active state on load
+    updateActivePreset();
   }
 
   function initColorPickers() {
@@ -1157,8 +1218,8 @@ const CursorEffects = (() => {
     // Track mouse movement
     document.addEventListener('mousemove', (e) => {
       if (!cursorDot) return;
-      cursorDot.style.left = e.clientX - 4 + 'px';
-      cursorDot.style.top = e.clientY - 4 + 'px';
+      cursorDot.style.left = e.clientX - 8 + 'px';
+      cursorDot.style.top = e.clientY - 8 + 'px';
       if (!cursorDot.classList.contains('active')) {
         cursorDot.classList.add('active');
       }
@@ -1172,7 +1233,7 @@ const CursorEffects = (() => {
   }
 
   function createClickParticles(x, y) {
-    const particleCount = 8;
+    const particleCount = 12;
     const angleStep = (Math.PI * 2) / particleCount;
 
     for (let i = 0; i < particleCount; i++) {
@@ -1181,7 +1242,7 @@ const CursorEffects = (() => {
       particle.style.top = y + 'px';
 
       const angle = angleStep * i;
-      const distance = 30 + Math.random() * 20;
+      const distance = 40 + Math.random() * 30;
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance;
 
@@ -1191,7 +1252,7 @@ const CursorEffects = (() => {
       document.body.appendChild(particle);
 
       // Remove particle after animation
-      setTimeout(() => particle.remove(), 600);
+      setTimeout(() => particle.remove(), 800);
     }
   }
 
