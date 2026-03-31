@@ -98,6 +98,18 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   transition: background-color var(--transition), color var(--transition);
+  animation: page-load 0.6s ease-out;
+}
+
+@keyframes page-load {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 a {
@@ -475,13 +487,14 @@ body.has-bg .bg-layer {
   border-radius: var(--radius-lg);
   padding: 18px;
   box-shadow: var(--shadow-card);
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
   animation: fadeInUp 0.4s ease both;
 }
 
 .widget:hover {
   box-shadow: var(--shadow);
   border-color: rgba(139, 127, 212, 0.25);
+  transform: translateY(-2px);
 }
 
 .widget-header {
@@ -1650,4 +1663,67 @@ body.has-bg .bg-layer {
     transform: translate(var(--tx), var(--ty)) scale(0);
     opacity: 0;
   }
+}
+
+/* Ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(139, 127, 212, 0.3);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.ripple:active::after {
+  width: 200%;
+  height: 200%;
+  opacity: 1;
+  transition: width 0.4s, height 0.4s, opacity 0.4s;
+  opacity: 0;
+}
+
+/* Apply ripple to buttons */
+.settings-action-btn,
+.btn-primary,
+.btn-secondary,
+.add-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.settings-action-btn::after,
+.btn-primary::after,
+.btn-secondary::after,
+.add-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.settings-action-btn:active::after,
+.btn-primary:active::after,
+.btn-secondary:active::after,
+.add-btn:active::after {
+  width: 200%;
+  height: 200%;
+  opacity: 1;
+  transition: width 0.5s, height 0.5s, opacity 0.6s;
+  opacity: 0;
 }
