@@ -559,7 +559,17 @@ const Todo = (() => {
 
   function updateCount(list) {
     const active = list.filter(t => !t.done).length;
-    $('#todo-count').textContent = active;
+    const total = list.length;
+
+    // Update main todo count (if element exists for legacy layout)
+    const todoCount = $('#todo-count');
+    if (todoCount) todoCount.textContent = active;
+
+    // Update compact widget count
+    const compactCount = $('#todo-count-compact');
+    if (compactCount) {
+      compactCount.textContent = active > 0 ? `${active} 项待办` : '无待办';
+    }
   }
 
   function render() {
@@ -636,20 +646,37 @@ const Todo = (() => {
 const Notes = (() => {
   let saveTimer = null;
 
+  function updatePreview(text) {
+    const preview = $('#notes-preview-compact');
+    if (preview) {
+      if (text.trim()) {
+        const firstLine = text.split('\n')[0].trim();
+        preview.textContent = firstLine.substring(0, 30) + (firstLine.length > 30 ? '...' : '');
+      } else {
+        preview.textContent = '无内容';
+      }
+    }
+  }
+
   function init() {
     const area = $('#notes-area');
     const indicator = $('#notes-saved');
 
-    area.value = lsGet(LS.NOTES, '');
+    const savedNotes = lsGet(LS.NOTES, '');
+    if (area) area.value = savedNotes;
+    updatePreview(savedNotes);
 
-    area.addEventListener('input', () => {
-      indicator.style.opacity = '0';
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => {
-        lsSet(LS.NOTES, area.value);
-        indicator.style.opacity = '1';
-      }, 800);
-    });
+    if (area) {
+      area.addEventListener('input', () => {
+        if (indicator) indicator.style.opacity = '0';
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          lsSet(LS.NOTES, area.value);
+          updatePreview(area.value);
+          if (indicator) indicator.style.opacity = '1';
+        }, 800);
+      });
+    }
   }
 
   return { init };
@@ -990,6 +1017,18 @@ const Background = (() => {
     const saved = lsGet(LS.BG, null);
     if (saved) applyBg(saved, '已保存');
 
+    // Restore saved background options
+    const savedOptions = lsGet(LS.BG_OPTIONS, {
+      displayMode: 'cover',
+      size: 100,
+      positionX: 50,
+      positionY: 50,
+      blur: 1,
+      opacity: 1,
+      saturation: 1
+    });
+    applyBgOptions(savedOptions);
+
     $('#fetch-anime-btn').addEventListener('click', fetchAnimeBackground);
 
     $('#bg-upload').addEventListener('change', e => {
@@ -999,6 +1038,110 @@ const Background = (() => {
     });
 
     $('#clear-bg-btn').addEventListener('click', clearBg);
+
+    // Initialize background controls
+    initBgControls(savedOptions);
+  }
+
+  function applyBgOptions(options) {
+    const bgLayer = $('#bg-layer');
+    const bgOverlay = $('#bg-overlay');
+
+    // Display mode
+    if (options.displayMode === 'custom') {
+      bgLayer.style.backgroundSize = `${options.size}%`;
+      bgLayer.style.backgroundPosition = `${options.positionX}% ${options.positionY}%`;
+    } else {
+      bgLayer.style.backgroundSize = options.displayMode;
+      bgLayer.style.backgroundPosition = 'center';
+    }
+
+    // Blur effect (applied to overlay)
+    bgOverlay.style.backdropFilter = `blur(${options.blur}px)`;
+
+    // Opacity
+    bgLayer.style.opacity = options.opacity;
+
+    // Saturation
+    bgLayer.style.filter = `saturate(${options.saturation})`;
+  }
+
+  function initBgControls(savedOptions) {
+    const displayMode = $('#bg-display-mode');
+    const customOptions = $('#bg-custom-options');
+    const bgSize = $('#bg-size');
+    const bgPosX = $('#bg-position-x');
+    const bgPosY = $('#bg-position-y');
+    const bgBlur = $('#bg-blur');
+    const bgBlurValue = $('#bg-blur-value');
+    const bgOpacity = $('#bg-opacity');
+    const bgOpacityValue = $('#bg-opacity-value');
+    const bgSaturation = $('#bg-saturation');
+    const bgSaturationValue = $('#bg-saturation-value');
+
+    // Set initial values
+    displayMode.value = savedOptions.displayMode;
+    bgSize.value = savedOptions.size;
+    bgPosX.value = savedOptions.positionX;
+    bgPosY.value = savedOptions.positionY;
+    bgBlur.value = savedOptions.blur;
+    bgBlurValue.textContent = `${savedOptions.blur}px`;
+    bgOpacity.value = savedOptions.opacity;
+    bgOpacityValue.textContent = `${Math.round(savedOptions.opacity * 100)}%`;
+    bgSaturation.value = savedOptions.saturation;
+    bgSaturationValue.textContent = `${Math.round(savedOptions.saturation * 100)}%`;
+
+    // Show/hide custom options
+    if (savedOptions.displayMode === 'custom') {
+      customOptions.classList.remove('hidden');
+    }
+
+    // Display mode change
+    displayMode.addEventListener('change', (e) => {
+      savedOptions.displayMode = e.target.value;
+      if (e.target.value === 'custom') {
+        customOptions.classList.remove('hidden');
+      } else {
+        customOptions.classList.add('hidden');
+      }
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
+
+    // Custom size/position
+    [bgSize, bgPosX, bgPosY].forEach(input => {
+      input.addEventListener('input', (e) => {
+        if (input === bgSize) savedOptions.size = parseFloat(e.target.value);
+        if (input === bgPosX) savedOptions.positionX = parseFloat(e.target.value);
+        if (input === bgPosY) savedOptions.positionY = parseFloat(e.target.value);
+        applyBgOptions(savedOptions);
+        lsSet(LS.BG_OPTIONS, savedOptions);
+      });
+    });
+
+    // Blur slider
+    bgBlur.addEventListener('input', (e) => {
+      savedOptions.blur = parseFloat(e.target.value);
+      bgBlurValue.textContent = `${savedOptions.blur}px`;
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
+
+    // Opacity slider
+    bgOpacity.addEventListener('input', (e) => {
+      savedOptions.opacity = parseFloat(e.target.value);
+      bgOpacityValue.textContent = `${Math.round(savedOptions.opacity * 100)}%`;
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
+
+    // Saturation slider
+    bgSaturation.addEventListener('input', (e) => {
+      savedOptions.saturation = parseFloat(e.target.value);
+      bgSaturationValue.textContent = `${Math.round(savedOptions.saturation * 100)}%`;
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
   }
 
   // ── Color math helpers ──
@@ -1078,6 +1221,9 @@ const SettingsPanel = (() => {
 
     // Initialize cursor effects toggle
     initCursorEffectsToggle();
+
+    // Initialize widget visibility toggles
+    initWidgetToggles();
   }
 
   function initPresetThemes() {
@@ -1191,6 +1337,41 @@ const SettingsPanel = (() => {
 
     toggle.addEventListener('change', (e) => {
       CursorEffects.toggle();
+    });
+  }
+
+  function initWidgetToggles() {
+    const widgetTypes = ['clock', 'weather', 'todo', 'notes'];
+    const savedVisibility = lsGet(LS.WIDGET_VISIBILITY, {
+      clock: true,
+      weather: true,
+      todo: true,
+      notes: true
+    });
+
+    widgetTypes.forEach(type => {
+      const toggle = $(`#widget-${type}-toggle`);
+      const widget = $(`#${type}-widget-compact`);
+
+      if (!toggle || !widget) return;
+
+      // Set initial state
+      toggle.checked = savedVisibility[type];
+      if (!savedVisibility[type]) {
+        widget.classList.add('hidden');
+      }
+
+      // Handle toggle changes
+      toggle.addEventListener('change', (e) => {
+        savedVisibility[type] = e.target.checked;
+        lsSet(LS.WIDGET_VISIBILITY, savedVisibility);
+
+        if (e.target.checked) {
+          widget.classList.remove('hidden');
+        } else {
+          widget.classList.add('hidden');
+        }
+      });
     });
   }
 
