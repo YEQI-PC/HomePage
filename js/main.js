@@ -197,7 +197,8 @@ const Weather = (() => {
 
       $('#weather-icon').textContent    = icon;
       $('#weather-temp').textContent    = `${cur.temp_C}°C`;
-      $('#weather-feels').textContent   = `体感 ${cur.FeelsLikeC}°C`;
+      const feelsEl = $('#weather-feels');
+      if (feelsEl) feelsEl.textContent = `体感${cur.FeelsLikeC}°C`;
       $('#weather-desc').textContent    = cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '';
       $('#weather-humidity').textContent = `💧 ${cur.humidity}%`;
       $('#weather-wind').textContent    = `🌬 ${cur.windspeedKmph}km/h`;
@@ -575,6 +576,8 @@ const Todo = (() => {
   function render() {
     const list  = load();
     const ul    = $('#todo-list');
+    if (!ul) return;
+
     ul.innerHTML = '';
     updateCount(list);
 
@@ -621,22 +624,25 @@ const Todo = (() => {
   function init() {
     render();
     const input = $('#todo-input');
+    const addBtn = $('#todo-add-btn');
 
-    $('#todo-add-btn').addEventListener('click', () => {
-      add(input.value);
-      input.value = '';
-      input.focus();
-    });
-
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
+    if (addBtn && input) {
+      addBtn.addEventListener('click', () => {
         add(input.value);
         input.value = '';
-      }
-    });
+        input.focus();
+      });
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          add(input.value);
+          input.value = '';
+        }
+      });
+    }
   }
 
-  return { init };
+  return { init, render };
 })();
 
 /* ================================================================
@@ -1382,6 +1388,95 @@ const SettingsPanel = (() => {
    Boot
    ================================================================ */
 
+// Todo Modal
+const TodoModal = (() => {
+  function open() {
+    $('#todo-modal-overlay').classList.add('open');
+    const input = $('#todo-input');
+    if (input) setTimeout(() => input.focus(), 100);
+  }
+
+  function close() {
+    $('#todo-modal-overlay').classList.remove('open');
+  }
+
+  function init() {
+    const compactWidget = $('#todo-widget-compact');
+    const modalClose = $('#todo-modal-close');
+    const overlay = $('#todo-modal-overlay');
+
+    if (compactWidget) {
+      compactWidget.addEventListener('click', open);
+    }
+    if (modalClose) {
+      modalClose.addEventListener('click', close);
+    }
+    if (overlay) {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) close();
+      });
+    }
+
+    // ESC key to close
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        close();
+      }
+    });
+  }
+
+  return { init, open, close };
+})();
+
+// Notes Modal
+const NotesModal = (() => {
+  function open() {
+    $('#notes-modal-overlay').classList.add('open');
+    const area = $('#notes-area');
+    if (area) setTimeout(() => area.focus(), 100);
+  }
+
+  function close() {
+    $('#notes-modal-overlay').classList.remove('open');
+  }
+
+  function init() {
+    const compactWidget = $('#notes-widget-compact');
+    const modalClose = $('#notes-modal-close');
+    const overlay = $('#notes-modal-overlay');
+
+    if (compactWidget) {
+      compactWidget.addEventListener('click', open);
+    }
+    if (modalClose) {
+      modalClose.addEventListener('click', close);
+    }
+    if (overlay) {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) close();
+      });
+    }
+
+    // ESC key to close (but not when typing in notes)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        const area = $('#notes-area');
+        if (area && document.activeElement === area) {
+          area.blur();
+        } else {
+          close();
+        }
+      }
+    });
+  }
+
+  return { init, open, close };
+})();
+
+/* ================================================================
+   Boot
+   ================================================================ */
+
 // Mouse Cursor Effects
 const CursorEffects = (() => {
   let cursorDot = null;
@@ -1463,6 +1558,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ShortcutModal.init();
   Todo.init();
   Notes.init();
+  TodoModal.init();
+  NotesModal.init();
   Recent.init();
   Bookmarks.init();
   BookmarkModal.init();

@@ -95,6 +95,7 @@
       <div class="widget-compact-info">
         <div class="weather-main-compact">
           <span class="weather-temp" id="weather-temp">--°C</span>
+          <span class="weather-feels" id="weather-feels"></span>
           <span class="weather-desc-compact" id="weather-desc">获取天气中…</span>
         </div>
         <div class="weather-meta-compact">
@@ -106,7 +107,7 @@
   </div>
 
   <!-- Todo Widget -->
-  <div class="widget-compact todo-widget" id="todo-widget-compact" data-widget="todo">
+  <div class="widget-compact todo-widget clickable" id="todo-widget-compact" data-widget="todo" title="点击打开待办事项">
     <div class="widget-compact-content">
       <span class="widget-compact-icon">✓</span>
       <div class="widget-compact-info">
@@ -117,7 +118,7 @@
   </div>
 
   <!-- Notes Widget -->
-  <div class="widget-compact notes-widget" id="notes-widget-compact" data-widget="notes">
+  <div class="widget-compact notes-widget clickable" id="notes-widget-compact" data-widget="notes" title="点击打开笔记">
     <div class="widget-compact-content">
       <span class="widget-compact-icon">📝</span>
       <div class="widget-compact-info">
@@ -415,6 +416,43 @@
         <button type="submit" class="btn-primary">保存</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- ── Todo Modal ── -->
+<div class="modal-overlay" id="todo-modal-overlay">
+  <div class="modal widget-modal" id="todo-modal">
+    <div class="modal-header">
+      <h3>✓ 待办事项 Todo</h3>
+      <button type="button" class="icon-btn" id="todo-modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="todo-input-wrap">
+        <input type="text" id="todo-input" placeholder="添加新的待办事项…" />
+        <button type="button" class="add-btn" id="todo-add-btn" title="添加">+</button>
+      </div>
+      <ul class="todo-list" id="todo-list">
+        <li class="todo-empty-hint">暂无待办，开始添加吧！</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── Notes Modal ── -->
+<div class="modal-overlay" id="notes-modal-overlay">
+  <div class="modal widget-modal" id="notes-modal">
+    <div class="modal-header">
+      <h3>📝 笔记 Notes</h3>
+      <button type="button" class="icon-btn" id="notes-modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <textarea class="notes-area" id="notes-area" placeholder="在此记录你的想法…"></textarea>
+      <div class="notes-saved-indicator" id="notes-saved">已自动保存</div>
+    </div>
   </div>
 </div>
 
