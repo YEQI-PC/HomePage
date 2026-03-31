@@ -86,7 +86,10 @@ function lsSet(key, val) {
 }
 
 function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
 }
 
 function timeAgo(ts) {
@@ -265,7 +268,7 @@ const Search = (() => {
     });
 
     document.addEventListener('click', e => {
-      if (!dropdown.contains(e.target) && e.target !== engineBtn) {
+      if (!dropdown.contains(e.target) && !engineBtn.contains(e.target)) {
         closeDropdown();
       }
     });
@@ -732,6 +735,7 @@ const Background = (() => {
     lsSet(LS.BG, dataUrl);
 
     // Load image into canvas for color extraction
+    // crossOrigin must be set before src to avoid tainted-canvas errors on external URLs
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => extractColors(img);
@@ -764,8 +768,9 @@ const Background = (() => {
       const data = ctx.getImageData(0, 0, SIZE, SIZE).data;
       let r = 0, g = 0, b = 0, count = 0;
 
-      // Step of 16 = 4 channels (RGBA) × 4 pixels — samples every 4th pixel,
-      // which is sufficient for colour averaging and much faster than full scan.
+      // Step of 16 = 4 channels (RGBA) × 4, meaning we sample 1 pixel out of
+      // every 4 consecutive pixels. Sufficient for colour averaging and faster
+      // than a full scan.
       for (let i = 0; i < data.length; i += 16) {
         const pr = data[i], pg = data[i+1], pb = data[i+2], pa = data[i+3];
         if (pa < 128) continue;
