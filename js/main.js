@@ -193,7 +193,7 @@ const Weather = (() => {
       contentEl.classList.remove('hidden');
     } catch (err) {
       if (loadingEl) {
-        loadingEl.innerHTML = `<span style="font-size:.78rem;color:var(--text-muted)">天气获取失败</span>`;
+        loadingEl.innerHTML = `<span class="weather-error">天气获取失败</span>`;
       }
     }
   }
@@ -211,6 +211,8 @@ const Weather = (() => {
 
 const Search = (() => {
   let currentEngine = 'google';
+  let engineBtn = null;
+  let dropdown  = null;
 
   function setEngine(key) {
     const eng = ENGINES[key];
@@ -224,41 +226,46 @@ const Search = (() => {
   }
 
   function openDropdown() {
-    $('#engine-dropdown').classList.add('open');
+    dropdown.classList.add('open');
   }
 
   function closeDropdown() {
-    $('#engine-dropdown').classList.remove('open');
+    dropdown.classList.remove('open');
   }
 
   function init() {
     const saved = lsGet(LS.ENGINE, 'google');
     setEngine(saved);
 
-    $('#engine-btn').addEventListener('click', e => {
+    // Cache elements to avoid repeated DOM queries in the global click handler
+    engineBtn  = $('#engine-btn');
+    dropdown   = $('#engine-dropdown');
+    const searchInput = $('#search-input');
+
+    engineBtn.addEventListener('click', e => {
       e.stopPropagation();
-      $('#engine-dropdown').classList.toggle('open');
+      dropdown.classList.toggle('open');
     });
 
     $$('.engine-option').forEach(btn => {
       btn.addEventListener('click', () => {
         setEngine(btn.dataset.engine);
         closeDropdown();
-        $('#search-input').focus();
+        searchInput.focus();
       });
     });
 
     $('#search-form').addEventListener('submit', e => {
       e.preventDefault();
-      const q = $('#search-input').value.trim();
+      const q = searchInput.value.trim();
       if (!q) return;
       const url = ENGINES[currentEngine].url + encodeURIComponent(q);
       window.open(url, '_blank', 'noopener,noreferrer');
-      $('#search-input').value = '';
+      searchInput.value = '';
     });
 
     document.addEventListener('click', e => {
-      if (!$('#engine-dropdown').contains(e.target) && e.target !== $('#engine-btn')) {
+      if (!dropdown.contains(e.target) && e.target !== engineBtn) {
         closeDropdown();
       }
     });
@@ -468,7 +475,7 @@ const Todo = (() => {
     updateCount(list);
 
     if (list.length === 0) {
-      ul.innerHTML = '<li style="font-size:.78rem;color:var(--text-muted);padding:4px 8px;">暂无待办，开始添加吧！</li>';
+      ul.innerHTML = '<li class="todo-empty-hint">暂无待办，开始添加吧！</li>';
       return;
     }
 
@@ -757,11 +764,14 @@ const Background = (() => {
       const data = ctx.getImageData(0, 0, SIZE, SIZE).data;
       let r = 0, g = 0, b = 0, count = 0;
 
-      // Sample every 4th pixel
+      // Step of 16 = 4 channels (RGBA) × 4 pixels — samples every 4th pixel,
+      // which is sufficient for colour averaging and much faster than full scan.
       for (let i = 0; i < data.length; i += 16) {
         const pr = data[i], pg = data[i+1], pb = data[i+2], pa = data[i+3];
         if (pa < 128) continue;
-        // Skip near-white and near-black pixels for a more meaningful accent
+        // Skip near-white (>230) and near-black (<25) pixels so the extracted
+        // accent reflects the image's actual chromatic content, not its
+        // highlights or shadows.
         const brightness = (pr + pg + pb) / 3;
         if (brightness > 230 || brightness < 25) continue;
         r += pr; g += pg; b += pb; count++;
@@ -772,7 +782,10 @@ const Background = (() => {
       g = Math.round(g / count);
       b = Math.round(b / count);
 
-      // Desaturate slightly for a more elegant palette
+      // Desaturate slightly and normalise lightness for a refined, low-saturation
+      // palette that fits the minimalist aesthetic:
+      //   - saturation capped at 0.55  → avoids overly vivid accent colours
+      //   - lightness clamped [0.42, 0.65] → ensures readable contrast on both themes
       const [h, s, l] = rgbToHsl(r, g, b);
       const sPrime = Math.min(s, 0.55);
       const lPrime = Math.max(0.42, Math.min(0.65, l));
@@ -805,26 +818,37 @@ const Background = (() => {
     btn.innerHTML = '<span class="spinning">↻</span> 加载中…';
     btn.disabled = true;
 
-    try {
-      const res = await fetch('https://api.waifu.pics/sfw/waifu', {
-        signal: AbortSignal.timeout(10000),
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const { url } = await res.json();
+    // Attempt up to 3 times to handle transient rate-limits or network errors
+    const MAX_RETRIES = 3;
+    let lastErr;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const res = await fetch('https://api.waifu.pics/sfw/waifu', {
+          signal: AbortSignal.timeout(10000),
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const { url } = await res.json();
 
-      // We fetch the image as blob to convert to data URL, bypassing
-      // mixed-content issues and enabling Canvas sampling.
-      const imgRes = await fetch(url, { signal: AbortSignal.timeout(15000) });
-      if (!imgRes.ok) throw new Error('img fetch failed');
-      const blob = await imgRes.blob();
-      const dataUrl = await blobToDataURL(blob);
-      applyBg(dataUrl, '动漫壁纸');
-    } catch (err) {
-      setStatus('加载失败，请重试');
-    } finally {
-      btn.innerHTML = origText;
-      btn.disabled = false;
+        // Fetch image as blob → data URL so Canvas sampling works (avoids taint)
+        const imgRes = await fetch(url, { signal: AbortSignal.timeout(15000) });
+        if (!imgRes.ok) throw new Error('img fetch failed');
+        const blob    = await imgRes.blob();
+        const dataUrl = await blobToDataURL(blob);
+        applyBg(dataUrl, '动漫壁纸');
+        lastErr = null;
+        break;
+      } catch (err) {
+        lastErr = err;
+        if (attempt < MAX_RETRIES) {
+          setStatus(`重试中 (${attempt}/${MAX_RETRIES})…`);
+          await new Promise(r => setTimeout(r, 800 * attempt));
+        }
+      }
     }
+
+    if (lastErr) setStatus('加载失败，请稍后重试');
+    btn.innerHTML = origText;
+    btn.disabled = false;
   }
 
   function blobToDataURL(blob) {

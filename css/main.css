@@ -964,7 +964,6 @@ body.has-bg .bg-layer {
   overflow: hidden;
   animation: fadeInUp 0.3s ease both;
   position: relative;
-  group: true;
 }
 
 .bookmark-card:hover {
@@ -1433,3 +1432,14 @@ body.has-bg .bg-layer {
 
 /* ── Utility ── */
 .hidden { display: none !important; }
+
+.weather-error {
+  font-size: .78rem;
+  color: var(--text-muted);
+}
+
+.todo-empty-hint {
+  font-size: .78rem;
+  color: var(--text-muted);
+  padding: 4px 8px;
+}
