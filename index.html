@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HomePage · 个人导航</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+<!-- Background layer -->
+<div id="bg-layer" class="bg-layer"></div>
+<div id="bg-overlay" class="bg-overlay"></div>
+
+<!-- ── Top Toolbar ── -->
+<header class="toolbar" id="toolbar">
+  <div class="toolbar-left">
+    <div class="logo">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">HomePage</span>
+    </div>
+  </div>
+
+  <div class="toolbar-center">
+    <form class="search-form" id="search-form">
+      <div class="search-wrap">
+        <button type="button" class="engine-btn" id="engine-btn" title="切换搜索引擎">
+          <span id="engine-icon">G</span>
+        </button>
+        <input
+          type="text"
+          class="search-input"
+          id="search-input"
+          placeholder="搜索 · Search…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit" class="search-submit" title="搜索">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <!-- Engine dropdown -->
+      <div class="engine-dropdown" id="engine-dropdown">
+        <button type="button" class="engine-option active" data-engine="google" data-icon="G" data-url="https://www.google.com/search?q=">
+          <span class="engine-logo google">G</span> Google
+        </button>
+        <button type="button" class="engine-option" data-engine="baidu" data-icon="百" data-url="https://www.baidu.com/s?wd=">
+          <span class="engine-logo baidu">百</span> Baidu 百度
+        </button>
+        <button type="button" class="engine-option" data-engine="bing" data-icon="B" data-url="https://www.bing.com/search?q=">
+          <span class="engine-logo bing">B</span> Bing
+        </button>
+        <button type="button" class="engine-option" data-engine="ddg" data-icon="D" data-url="https://duckduckgo.com/?q=">
+          <span class="engine-logo ddg">D</span> DuckDuckGo
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toolbar-right">
+    <button class="icon-btn" id="theme-toggle" title="切换主题">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <button class="icon-btn" id="settings-btn" title="设置">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ── Main Layout ── -->
+<main class="main-layout">
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <!-- Clock -->
+    <div class="widget clock-widget">
+      <div class="clock-time" id="clock-time">00:00:00</div>
+      <div class="clock-date" id="clock-date">星期一 · 2024年1月1日</div>
+    </div>
+
+    <!-- Weather -->
+    <div class="widget weather-widget" id="weather-widget">
+      <div class="weather-loading" id="weather-loading">
+        <div class="shimmer-line"></div>
+        <div class="shimmer-line short"></div>
+      </div>
+      <div class="weather-content hidden" id="weather-content">
+        <div class="weather-main">
+          <span class="weather-icon" id="weather-icon">🌤</span>
+          <div class="weather-temp-wrap">
+            <span class="weather-temp" id="weather-temp">--°C</span>
+            <span class="weather-feels" id="weather-feels">体感 --°C</span>
+          </div>
+        </div>
+        <div class="weather-desc" id="weather-desc">获取天气中…</div>
+        <div class="weather-meta">
+          <span id="weather-humidity">💧 --%</span>
+          <span id="weather-wind">🌬 --km/h</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Todo -->
+    <div class="widget todo-widget">
+      <div class="widget-header">
+        <span class="widget-title">待办事项</span>
+        <span class="todo-count badge" id="todo-count">0</span>
+      </div>
+      <div class="todo-input-wrap">
+        <input type="text" id="todo-input" placeholder="添加新待办…" maxlength="80" />
+        <button type="button" id="todo-add-btn" class="add-btn">+</button>
+      </div>
+      <ul class="todo-list" id="todo-list"></ul>
+    </div>
+
+    <!-- Notes -->
+    <div class="widget notes-widget">
+      <div class="widget-header">
+        <span class="widget-title">便签</span>
+        <span class="notes-saved-indicator" id="notes-saved">✓ 已保存</span>
+      </div>
+      <textarea id="notes-area" class="notes-area" placeholder="随手记录…" spellcheck="false"></textarea>
+    </div>
+  </aside>
+
+  <!-- Content Area -->
+  <section class="content-area">
+
+    <!-- Shortcuts -->
+    <div id="shortcuts-section">
+      <!-- Groups rendered by JS -->
+    </div>
+
+    <!-- Recently Visited -->
+    <div class="content-block" id="recent-block">
+      <div class="block-header">
+        <h2 class="block-title">最近访问</h2>
+        <button type="button" class="text-btn" id="clear-recent-btn">清除</button>
+      </div>
+      <div class="recent-list" id="recent-list">
+        <p class="empty-hint">暂无访问记录</p>
+      </div>
+    </div>
+
+    <!-- Bookmarks -->
+    <div class="content-block" id="bookmarks-block">
+      <div class="block-header">
+        <h2 class="block-title">我的收藏</h2>
+        <button type="button" class="text-btn" id="add-bookmark-btn">+ 添加</button>
+      </div>
+      <div class="bookmarks-grid" id="bookmarks-grid">
+        <p class="empty-hint">暂无收藏，点击"+ 添加"</p>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- ── Settings Panel ── -->
+<div class="settings-overlay" id="settings-overlay"></div>
+<aside class="settings-panel" id="settings-panel">
+  <div class="settings-header">
+    <h2>设置 · Settings</h2>
+    <button type="button" class="icon-btn" id="settings-close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="settings-body">
+    <!-- Background Section -->
+    <div class="settings-section">
+      <h3 class="settings-section-title">背景 Background</h3>
+      <div class="settings-row">
+        <button type="button" class="settings-action-btn" id="fetch-anime-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          随机动漫壁纸
+        </button>
+        <label class="settings-action-btn" for="bg-upload">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          上传图片
+          <input type="file" id="bg-upload" accept="image/*" style="display:none" />
+        </label>
+        <button type="button" class="settings-action-btn" id="clear-bg-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          清除背景
+        </button>
+      </div>
+      <div class="bg-preview-wrap">
+        <div class="bg-preview" id="bg-preview"></div>
+        <span id="bg-status" class="bg-status"></span>
+      </div>
+    </div>
+
+    <!-- Shortcut Section -->
+    <div class="settings-section">
+      <h3 class="settings-section-title">快捷方式 Shortcuts</h3>
+      <div class="settings-row">
+        <button type="button" class="settings-action-btn primary" id="add-shortcut-btn">
+          + 添加快捷方式
+        </button>
+      </div>
+      <div id="shortcut-manager-list" class="shortcut-manager-list"></div>
+    </div>
+
+    <!-- About -->
+    <div class="settings-section">
+      <h3 class="settings-section-title">关于 About</h3>
+      <p class="settings-about-text">个人导航主页 · 用纯粹的代码打造你的数字工作台</p>
+      <p class="settings-about-text" style="margin-top:4px;opacity:.6;font-size:.75rem;">Data stored locally · No tracking</p>
+    </div>
+  </div>
+</aside>
+
+<!-- ── Shortcut Modal ── -->
+<div class="modal-overlay" id="shortcut-modal-overlay">
+  <div class="modal" id="shortcut-modal">
+    <div class="modal-header">
+      <h3 id="shortcut-modal-title">添加快捷方式</h3>
+      <button type="button" class="icon-btn" id="shortcut-modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="shortcut-form" class="modal-form">
+      <input type="hidden" id="shortcut-edit-id" />
+      <div class="form-group">
+        <label>名称 Name</label>
+        <input type="text" id="shortcut-name" placeholder="e.g. GitHub" required maxlength="30" />
+      </div>
+      <div class="form-group">
+        <label>链接 URL</label>
+        <input type="url" id="shortcut-url" placeholder="https://" required />
+      </div>
+      <div class="form-group">
+        <label>图标 Emoji / Icon</label>
+        <input type="text" id="shortcut-icon" placeholder="🔗  或输入单个 emoji" maxlength="4" />
+      </div>
+      <div class="form-group">
+        <label>分组 Group</label>
+        <input type="text" id="shortcut-group" placeholder="e.g. 常用" required maxlength="20" />
+      </div>
+      <div class="form-group">
+        <label>描述 Description (可选)</label>
+        <input type="text" id="shortcut-desc" placeholder="简短描述" maxlength="50" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="shortcut-cancel-btn">取消</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Bookmark Modal ── -->
+<div class="modal-overlay" id="bookmark-modal-overlay">
+  <div class="modal" id="bookmark-modal">
+    <div class="modal-header">
+      <h3>添加收藏</h3>
+      <button type="button" class="icon-btn" id="bookmark-modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="bookmark-form" class="modal-form">
+      <div class="form-group">
+        <label>名称 Name</label>
+        <input type="text" id="bookmark-name" placeholder="e.g. My Blog" required maxlength="40" />
+      </div>
+      <div class="form-group">
+        <label>链接 URL</label>
+        <input type="url" id="bookmark-url" placeholder="https://" required />
+      </div>
+      <div class="form-group">
+        <label>图标 Emoji</label>
+        <input type="text" id="bookmark-icon" placeholder="🔖" maxlength="4" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="bookmark-cancel-btn">取消</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Hidden canvas for color extraction -->
+<canvas id="color-canvas" style="display:none"></canvas>
+
+<script src="js/main.js"></script>
+</body>
+</html>
