@@ -461,7 +461,23 @@ body.has-bg .bg-layer {
   .main-layout {
     padding: 12px;
     gap: 12px;
-    padding-top: calc(var(--toolbar-height) + 12px);
+    padding-top: calc(var(--toolbar-height) + 80px);
+  }
+  .widgets-bar {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  .widget-compact {
+    padding: 8px 10px;
+  }
+  .widget-compact-icon {
+    font-size: 1.2rem;
+  }
+  .clock-time-compact {
+    font-size: 0.8rem;
+  }
+  .clock-date-compact {
+    font-size: 0.65rem;
   }
   .shortcut-grid {
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
