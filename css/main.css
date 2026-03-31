@@ -402,17 +402,16 @@ body.has-bg .bg-layer {
 
 /* ── Main Layout ── */
 .main-layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  gap: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   margin-top: var(--toolbar-height);
   min-height: calc(100vh - var(--toolbar-height));
   padding: 24px;
-  gap: 24px;
   max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: calc(var(--toolbar-height) + 24px);
+  padding-top: calc(var(--toolbar-height) + 80px);
 }
 
 @media (max-width: 1200px) {
@@ -426,28 +425,15 @@ body.has-bg .bg-layer {
 
 @media (max-width: 900px) {
   .main-layout {
-    grid-template-columns: 1fr;
     padding: 16px;
     gap: 16px;
-    padding-top: calc(var(--toolbar-height) + 16px);
-  }
-  .sidebar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .clock-widget {
-    grid-column: 1 / -1;
+    padding-top: calc(var(--toolbar-height) + 80px);
   }
 }
 
 @media (max-width: 600px) {
-  .sidebar {
-    grid-template-columns: 1fr;
-  }
   :root {
     --toolbar-height: 52px;
-    --sidebar-width: 100%;
   }
   .toolbar {
     padding: 0 12px;
@@ -482,9 +468,6 @@ body.has-bg .bg-layer {
   .shortcut-grid {
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 8px;
-  }
-  .widget {
-    padding: 14px;
   }
 }
 
@@ -532,6 +515,21 @@ body.has-bg .bg-layer {
   transform: translateY(-2px);
 }
 
+.widget-compact.clickable {
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.widget-compact.clickable:hover {
+  border-color: var(--primary);
+  box-shadow: 0 6px 16px rgba(139, 127, 212, 0.2);
+  transform: translateY(-3px);
+}
+
+.widget-compact.clickable:active {
+  transform: translateY(-1px);
+}
+
 .widget-compact.hidden {
   display: none;
 }
@@ -573,6 +571,12 @@ body.has-bg .bg-layer {
   gap: 6px;
   font-size: 0.85rem;
   color: var(--text-primary);
+  flex-wrap: wrap;
+}
+
+.weather-feels {
+  font-size: 0.68rem;
+  color: var(--text-muted);
 }
 
 .weather-desc-compact {
@@ -615,19 +619,10 @@ body.has-bg .bg-layer {
   }
 }
 
-/* Adjust main layout to account for widgets bar */
-.main-layout {
-  padding-top: calc(var(--toolbar-height) + 80px);
-}
+/* ── Sidebar (Legacy - Remove orphaned CSS) ── */
+/* Removed .sidebar rules as sidebar no longer exists */
 
-/* ── Sidebar ── */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* ── Widget Base ── */
+/* ── Widget Base (Legacy - Keep for potential future use) ── */
 .widget {
   background: var(--bg-card);
   backdrop-filter: blur(12px) saturate(1.2);
@@ -1774,6 +1769,23 @@ body.has-bg .bg-layer {
   font-size: .95rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.widget-modal {
+  max-width: 480px;
+}
+
+.widget-modal .modal-body {
+  max-height: 70vh;
 }
 
 .modal-form {
