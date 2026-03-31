@@ -195,6 +195,37 @@
       </div>
     </div>
 
+    <!-- Theme Colors Section -->
+    <div class="settings-section">
+      <h3 class="settings-section-title">主题色 Theme Colors</h3>
+      <div class="color-picker-wrap">
+        <label class="color-picker-label">
+          <span>主色调 Primary</span>
+          <input type="color" id="primary-color-picker" value="#8b7fd4" />
+        </label>
+        <label class="color-picker-label">
+          <span>强调色 Accent</span>
+          <input type="color" id="accent-color-picker" value="#c9a0dc" />
+        </label>
+      </div>
+      <div class="settings-row">
+        <button type="button" class="settings-action-btn" id="reset-colors-btn">
+          重置默认颜色
+        </button>
+      </div>
+    </div>
+
+    <!-- Effects Section -->
+    <div class="settings-section">
+      <h3 class="settings-section-title">特效 Effects</h3>
+      <div class="settings-toggle-row">
+        <label class="toggle-label">
+          <span>鼠标特效 Cursor Effects</span>
+          <input type="checkbox" id="cursor-effects-toggle" checked />
+        </label>
+      </div>
+    </div>
+
     <!-- Shortcut Section -->
     <div class="settings-section">
       <h3 class="settings-section-title">快捷方式 Shortcuts</h3>
@@ -203,6 +234,7 @@
           + 添加快捷方式
         </button>
       </div>
+      <p class="settings-hint">💡 提示：快捷方式可以拖拽排序</p>
       <div id="shortcut-manager-list" class="shortcut-manager-list"></div>
     </div>
 

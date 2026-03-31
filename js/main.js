@@ -18,6 +18,8 @@ const LS = {
   BOOKMARKS:  'hp_bookmarks',
   BG:         'hp_bg',
   ENGINE:     'hp_engine',
+  CUSTOM_COLORS: 'hp_custom_colors',
+  CURSOR_EFFECTS: 'hp_cursor_effects',
 };
 
 const ENGINES = {
@@ -44,6 +46,12 @@ const DEFAULT_SHORTCUTS = [
   { id: 's11', group: '学习',  name: 'Stack Overflow', url: 'https://stackoverflow.com', icon: '🧩', desc: '技术问答' },
   { id: 's12', group: '学习',  name: 'LeetCode',   url: 'https://leetcode.com',      icon: '⚡', desc: '算法练习' },
   { id: 's13', group: '学习',  name: 'Wikipedia',  url: 'https://www.wikipedia.org', icon: '📚', desc: '百科全书' },
+  // Beihang 北航
+  { id: 's14', group: 'Beihang 北航',  name: '研究生院',  url: 'https://gsmis.buaa.edu.cn', icon: '🎓', desc: '研究生管理系统' },
+  { id: 's15', group: 'Beihang 北航',  name: '北航邮箱',  url: 'https://mail.buaa.edu.cn',  icon: '📧', desc: '北航邮箱系统' },
+  { id: 's16', group: 'Beihang 北航',  name: '教务处',    url: 'https://jiaowu.buaa.edu.cn', icon: '📋', desc: '本科教务系统' },
+  { id: 's17', group: 'Beihang 北航',  name: '图书馆',    url: 'https://lib.buaa.edu.cn',    icon: '📚', desc: '北航图书馆' },
+  { id: 's18', group: 'Beihang 北航',  name: 'VPN',       url: 'https://e.buaa.edu.cn',      icon: '🔐', desc: '校园VPN' },
 ];
 
 const WEATHER_CODE_MAP = {
@@ -314,18 +322,34 @@ const Shortcuts = (() => {
       wrap.appendChild(titleRow);
 
       const grid = el('div', 'shortcut-grid');
-      items.forEach(item => {
+      grid.dataset.group = groupName;
+
+      items.forEach((item, index) => {
         const card = el('a', 'shortcut-card');
         card.href   = item.url;
         card.target = '_blank';
         card.rel    = 'noopener noreferrer';
         card.title  = item.desc || item.name;
+        card.dataset.id = item.id;
+        card.draggable = true;
         card.innerHTML = `
           <span class="shortcut-icon">${item.icon || '🔗'}</span>
           <span class="shortcut-name">${item.name}</span>
           ${item.desc ? `<span class="shortcut-desc">${item.desc}</span>` : ''}
         `;
-        card.addEventListener('click', () => {
+
+        // Add drag and drop event listeners
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragover', handleDragOver);
+        card.addEventListener('drop', handleDrop);
+        card.addEventListener('dragend', handleDragEnd);
+
+        card.addEventListener('click', (e) => {
+          // Don't navigate if we just finished dragging
+          if (card.classList.contains('dragging')) {
+            e.preventDefault();
+            return;
+          }
           Recent.record({ name: item.name, url: item.url, icon: item.icon });
         });
         grid.appendChild(card);
@@ -336,6 +360,71 @@ const Shortcuts = (() => {
     });
 
     renderManager();
+  }
+
+  let draggedElement = null;
+
+  function handleDragStart(e) {
+    draggedElement = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+  }
+
+  function handleDragOver(e) {
+    if (e.preventDefault) {
+      e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+
+    const target = e.currentTarget;
+    if (target !== draggedElement && target.classList.contains('shortcut-card')) {
+      target.classList.add('drag-over');
+    }
+    return false;
+  }
+
+  function handleDrop(e) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    }
+
+    const target = e.currentTarget;
+    target.classList.remove('drag-over');
+
+    if (draggedElement !== target) {
+      // Swap positions in the data
+      const list = load();
+      const draggedId = draggedElement.dataset.id;
+      const targetId = target.dataset.id;
+
+      const draggedIndex = list.findIndex(item => item.id === draggedId);
+      const targetIndex = list.findIndex(item => item.id === targetId);
+
+      if (draggedIndex !== -1 && targetIndex !== -1) {
+        // Swap items
+        [list[draggedIndex], list[targetIndex]] = [list[targetIndex], list[draggedIndex]];
+        save(list);
+        render();
+      }
+    }
+
+    return false;
+  }
+
+  function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    // Remove drag-over class from all cards
+    $$('.shortcut-card').forEach(card => {
+      card.classList.remove('drag-over');
+    });
+    // Clear dragging state after a short delay
+    setTimeout(() => {
+      if (draggedElement) {
+        draggedElement.classList.remove('dragging');
+      }
+      draggedElement = null;
+    }, 100);
   }
 
   function renderManager() {
@@ -828,6 +917,7 @@ const Background = (() => {
     let lastErr;
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
+        // Use CORS proxy to avoid tainted canvas issues
         const res = await fetch('https://api.waifu.pics/sfw/waifu', {
           signal: AbortSignal.timeout(10000),
         });
@@ -835,7 +925,10 @@ const Background = (() => {
         const { url } = await res.json();
 
         // Fetch image as blob → data URL so Canvas sampling works (avoids taint)
-        const imgRes = await fetch(url, { signal: AbortSignal.timeout(15000) });
+        const imgRes = await fetch(url, {
+          signal: AbortSignal.timeout(15000),
+          mode: 'cors'
+        });
         if (!imgRes.ok) throw new Error('img fetch failed');
         const blob    = await imgRes.blob();
         const dataUrl = await blobToDataURL(blob);
@@ -851,7 +944,10 @@ const Background = (() => {
       }
     }
 
-    if (lastErr) setStatus('加载失败，请稍后重试');
+    if (lastErr) {
+      setStatus('加载失败，请稍后重试');
+      console.error('Background fetch error:', lastErr);
+    }
     btn.innerHTML = origText;
     btn.disabled = false;
   }
@@ -956,6 +1052,85 @@ const SettingsPanel = (() => {
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') close();
     });
+
+    // Initialize color pickers
+    initColorPickers();
+
+    // Initialize cursor effects toggle
+    initCursorEffectsToggle();
+  }
+
+  function initColorPickers() {
+    const primaryPicker = $('#primary-color-picker');
+    const accentPicker = $('#accent-color-picker');
+    const resetBtn = $('#reset-colors-btn');
+
+    // Load saved colors
+    const savedColors = lsGet(LS.CUSTOM_COLORS, null);
+    if (savedColors) {
+      primaryPicker.value = savedColors.primary;
+      accentPicker.value = savedColors.accent;
+      applyCustomColors(savedColors.primary, savedColors.accent);
+    }
+
+    // Primary color change
+    primaryPicker.addEventListener('input', (e) => {
+      const primary = e.target.value;
+      const accent = accentPicker.value;
+      applyCustomColors(primary, accent);
+      lsSet(LS.CUSTOM_COLORS, { primary, accent });
+    });
+
+    // Accent color change
+    accentPicker.addEventListener('input', (e) => {
+      const primary = primaryPicker.value;
+      const accent = e.target.value;
+      applyCustomColors(primary, accent);
+      lsSet(LS.CUSTOM_COLORS, { primary, accent });
+    });
+
+    // Reset colors
+    resetBtn.addEventListener('click', () => {
+      primaryPicker.value = '#8b7fd4';
+      accentPicker.value = '#c9a0dc';
+      applyCustomColors('#8b7fd4', '#c9a0dc');
+      lsSet(LS.CUSTOM_COLORS, null);
+    });
+  }
+
+  function applyCustomColors(primary, accent) {
+    const root = document.documentElement;
+
+    // Convert hex to RGB for manipulation
+    const hexToRgb = (hex) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    };
+
+    const rgb = hexToRgb(primary);
+    if (rgb) {
+      root.style.setProperty('--primary', primary);
+      root.style.setProperty('--primary-light',
+        `rgb(${Math.min(255, rgb.r + 30)}, ${Math.min(255, rgb.g + 30)}, ${Math.min(255, rgb.b + 30)})`);
+      root.style.setProperty('--primary-dark',
+        `rgb(${Math.max(0, rgb.r - 30)}, ${Math.max(0, rgb.g - 30)}, ${Math.max(0, rgb.b - 30)})`);
+    }
+
+    root.style.setProperty('--accent', accent);
+  }
+
+  function initCursorEffectsToggle() {
+    const toggle = $('#cursor-effects-toggle');
+    const isEnabled = lsGet(LS.CURSOR_EFFECTS, true);
+    toggle.checked = isEnabled;
+
+    toggle.addEventListener('change', (e) => {
+      CursorEffects.toggle();
+    });
   }
 
   return { init };
@@ -964,6 +1139,78 @@ const SettingsPanel = (() => {
 /* ================================================================
    Boot
    ================================================================ */
+
+// Mouse Cursor Effects
+const CursorEffects = (() => {
+  let cursorDot = null;
+  let isEnabled = true;
+
+  function init() {
+    // Check if user has enabled cursor effects
+    isEnabled = lsGet('hp_cursor_effects', true);
+    if (!isEnabled) return;
+
+    // Create cursor dot
+    cursorDot = el('div', 'cursor-dot');
+    document.body.appendChild(cursorDot);
+
+    // Track mouse movement
+    document.addEventListener('mousemove', (e) => {
+      if (!cursorDot) return;
+      cursorDot.style.left = e.clientX - 4 + 'px';
+      cursorDot.style.top = e.clientY - 4 + 'px';
+      if (!cursorDot.classList.contains('active')) {
+        cursorDot.classList.add('active');
+      }
+    });
+
+    // Add click particle effect
+    document.addEventListener('click', (e) => {
+      if (!isEnabled) return;
+      createClickParticles(e.clientX, e.clientY);
+    });
+  }
+
+  function createClickParticles(x, y) {
+    const particleCount = 8;
+    const angleStep = (Math.PI * 2) / particleCount;
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = el('div', 'click-particle');
+      particle.style.left = x + 'px';
+      particle.style.top = y + 'px';
+
+      const angle = angleStep * i;
+      const distance = 30 + Math.random() * 20;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+
+      particle.style.setProperty('--tx', tx + 'px');
+      particle.style.setProperty('--ty', ty + 'px');
+
+      document.body.appendChild(particle);
+
+      // Remove particle after animation
+      setTimeout(() => particle.remove(), 600);
+    }
+  }
+
+  function toggle() {
+    isEnabled = !isEnabled;
+    lsSet('hp_cursor_effects', isEnabled);
+    if (isEnabled) {
+      init();
+    } else {
+      if (cursorDot) {
+        cursorDot.remove();
+        cursorDot = null;
+      }
+    }
+    return isEnabled;
+  }
+
+  return { init, toggle };
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
@@ -979,4 +1226,5 @@ document.addEventListener('DOMContentLoaded', () => {
   BookmarkModal.init();
   Background.init();
   SettingsPanel.init();
+  CursorEffects.init();
 });

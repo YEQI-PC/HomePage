@@ -98,6 +98,18 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   transition: background-color var(--transition), color var(--transition);
+  animation: page-load 0.6s ease-out;
+}
+
+@keyframes page-load {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 a {
@@ -395,22 +407,34 @@ body.has-bg .bg-layer {
   gap: 0;
   margin-top: var(--toolbar-height);
   min-height: calc(100vh - var(--toolbar-height));
-  padding: 20px;
-  gap: 20px;
-  max-width: 1400px;
+  padding: 24px;
+  gap: 24px;
+  max-width: 1600px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: calc(var(--toolbar-height) + 20px);
+  padding-top: calc(var(--toolbar-height) + 24px);
+}
+
+@media (max-width: 1200px) {
+  .main-layout {
+    max-width: 100%;
+    padding: 20px;
+    gap: 20px;
+    padding-top: calc(var(--toolbar-height) + 20px);
+  }
 }
 
 @media (max-width: 900px) {
   .main-layout {
     grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 16px;
+    padding-top: calc(var(--toolbar-height) + 16px);
   }
   .sidebar {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
   }
   .clock-widget {
     grid-column: 1 / -1;
@@ -428,12 +452,23 @@ body.has-bg .bg-layer {
   .toolbar {
     padding: 0 12px;
   }
+  .toolbar-center {
+    max-width: 100%;
+  }
   .logo-text {
     display: none;
   }
   .main-layout {
-    padding: 10px;
-    padding-top: calc(var(--toolbar-height) + 10px);
+    padding: 12px;
+    gap: 12px;
+    padding-top: calc(var(--toolbar-height) + 12px);
+  }
+  .shortcut-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+  }
+  .widget {
+    padding: 14px;
   }
 }
 
@@ -452,13 +487,14 @@ body.has-bg .bg-layer {
   border-radius: var(--radius-lg);
   padding: 18px;
   box-shadow: var(--shadow-card);
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition);
   animation: fadeInUp 0.4s ease both;
 }
 
 .widget:hover {
   box-shadow: var(--shadow);
   border-color: rgba(139, 127, 212, 0.25);
+  transform: translateY(-2px);
 }
 
 .widget-header {
@@ -817,7 +853,7 @@ body.has-bg .bg-layer {
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   text-decoration: none;
-  cursor: pointer;
+  cursor: grab;
   transition:
     background var(--transition),
     box-shadow var(--transition),
@@ -826,6 +862,22 @@ body.has-bg .bg-layer {
   animation: fadeInUp 0.35s ease both;
   position: relative;
   overflow: hidden;
+}
+
+.shortcut-card:active {
+  cursor: grabbing;
+}
+
+.shortcut-card.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.shortcut-card.drag-over {
+  border-color: var(--primary);
+  background: var(--bg-card-hover);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-lg);
 }
 
 .shortcut-card::before {
@@ -1242,6 +1294,122 @@ body.has-bg .bg-layer {
   line-height: 1.5;
 }
 
+/* Color Picker Styles */
+.color-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.color-picker-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.color-picker-label:hover {
+  background: rgba(139, 127, 212, 0.08);
+  border-color: rgba(139, 127, 212, 0.3);
+}
+
+.color-picker-label span {
+  font-size: .82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.color-picker-label input[type="color"] {
+  width: 40px;
+  height: 30px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+
+.color-picker-label input[type="color"]:hover {
+  border-color: var(--primary);
+}
+
+/* Toggle Styles */
+.settings-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.toggle-label:hover {
+  background: rgba(139, 127, 212, 0.08);
+  border-color: rgba(139, 127, 212, 0.3);
+}
+
+.toggle-label span {
+  font-size: .82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 40px;
+  height: 22px;
+  appearance: none;
+  background: var(--bg-input);
+  border: 2px solid var(--border-color);
+  border-radius: 11px;
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.toggle-label input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  top: 1px;
+  left: 1px;
+  transition: transform var(--transition), background var(--transition);
+}
+
+.toggle-label input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.toggle-label input[type="checkbox"]:checked::before {
+  background: #fff;
+  transform: translateX(18px);
+}
+
+.settings-hint {
+  font-size: .75rem;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  background: rgba(139, 127, 212, 0.06);
+  border-radius: var(--radius-sm);
+  margin-top: -2px;
+}
+
 /* ── Modals ── */
 .modal-overlay {
   position: fixed;
@@ -1442,4 +1610,120 @@ body.has-bg .bg-layer {
   font-size: .78rem;
   color: var(--text-muted);
   padding: 4px 8px;
+}
+
+/* ── Mouse Cursor Effects ── */
+.cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.1s;
+  mix-blend-mode: difference;
+}
+
+.cursor-dot.active {
+  opacity: 0.6;
+  animation: cursor-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cursor-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.3;
+  }
+}
+
+/* Particle effect on click */
+.click-particle {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  background: var(--primary);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  animation: particle-burst 0.6s ease-out forwards;
+}
+
+@keyframes particle-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(139, 127, 212, 0.3);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.ripple:active::after {
+  width: 200%;
+  height: 200%;
+  opacity: 1;
+  transition: width 0.4s, height 0.4s, opacity 0.4s;
+  opacity: 0;
+}
+
+/* Apply ripple to buttons */
+.settings-action-btn,
+.btn-primary,
+.btn-secondary,
+.add-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.settings-action-btn::after,
+.btn-primary::after,
+.btn-secondary::after,
+.add-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.settings-action-btn:active::after,
+.btn-primary:active::after,
+.btn-secondary:active::after,
+.add-btn:active::after {
+  width: 200%;
+  height: 200%;
+  opacity: 1;
+  transition: width 0.5s, height 0.5s, opacity 0.6s;
+  opacity: 0;
 }
