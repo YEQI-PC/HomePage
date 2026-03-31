@@ -197,7 +197,8 @@ const Weather = (() => {
 
       $('#weather-icon').textContent    = icon;
       $('#weather-temp').textContent    = `${cur.temp_C}°C`;
-      $('#weather-feels').textContent   = `体感 ${cur.FeelsLikeC}°C`;
+      const feelsEl = $('#weather-feels');
+      if (feelsEl) feelsEl.textContent = `体感${cur.FeelsLikeC}°C`;
       $('#weather-desc').textContent    = cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '';
       $('#weather-humidity').textContent = `💧 ${cur.humidity}%`;
       $('#weather-wind').textContent    = `🌬 ${cur.windspeedKmph}km/h`;
