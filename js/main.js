@@ -928,6 +928,19 @@ const Background = (() => {
       root.style.setProperty('--primary',       primary);
       root.style.setProperty('--primary-light', primaryLight);
       root.style.setProperty('--primary-dark',  primaryDark);
+
+      // Update alpha variants for theme consistency
+      root.style.setProperty('--primary-alpha-06', `rgba(${pr2}, ${pg2}, ${pb2}, 0.06)`);
+      root.style.setProperty('--primary-alpha-08', `rgba(${pr2}, ${pg2}, ${pb2}, 0.08)`);
+      root.style.setProperty('--primary-alpha-10', `rgba(${pr2}, ${pg2}, ${pb2}, 0.10)`);
+      root.style.setProperty('--primary-alpha-12', `rgba(${pr2}, ${pg2}, ${pb2}, 0.12)`);
+      root.style.setProperty('--primary-alpha-15', `rgba(${pr2}, ${pg2}, ${pb2}, 0.15)`);
+      root.style.setProperty('--primary-alpha-20', `rgba(${pr2}, ${pg2}, ${pb2}, 0.20)`);
+      root.style.setProperty('--primary-alpha-25', `rgba(${pr2}, ${pg2}, ${pb2}, 0.25)`);
+      root.style.setProperty('--primary-alpha-30', `rgba(${pr2}, ${pg2}, ${pb2}, 0.30)`);
+      root.style.setProperty('--primary-alpha-40', `rgba(${pr2}, ${pg2}, ${pb2}, 0.40)`);
+      root.style.setProperty('--primary-alpha-50', `rgba(${pr2}, ${pg2}, ${pb2}, 0.50)`);
+      root.style.setProperty('--primary-alpha-60', `rgba(${pr2}, ${pg2}, ${pb2}, 0.60)`);
     } catch (e) {
       // Canvas tainted (cross-origin image), ignore silently
     }
@@ -951,51 +964,63 @@ const Background = (() => {
     const API_ENDPOINTS = [
       { url: 'https://api.waifu.pics/sfw/waifu', type: 'waifu.pics' },
       { url: 'https://api.waifu.im/search/?included_tags=waifu&is_nsfw=false', type: 'waifu.im' },
-      { url: 'https://nekos.best/api/v2/neko', type: 'nekos.best' }
+      { url: 'https://nekos.best/api/v2/neko', type: 'nekos.best' },
+      { url: 'https://api.waifu.pics/sfw/neko', type: 'waifu.pics-neko' },
+      { url: 'https://nekos.best/api/v2/waifu', type: 'nekos.best-waifu' }
     ];
 
     let lastErr;
     for (const endpoint of API_ENDPOINTS) {
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
         const res = await fetch(endpoint.url, {
-          signal: AbortSignal.timeout(10000),
+          signal: controller.signal,
         });
+        clearTimeout(timeoutId);
+
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
 
         // Extract URL based on API structure
         let imageUrl;
-        if (endpoint.type === 'waifu.pics') {
+        if (endpoint.type.startsWith('waifu.pics')) {
           imageUrl = data.url;
         } else if (endpoint.type === 'waifu.im') {
           imageUrl = data.images?.[0]?.url;
-        } else if (endpoint.type === 'nekos.best') {
+        } else if (endpoint.type.startsWith('nekos.best')) {
           imageUrl = data.results?.[0]?.url;
         }
 
         if (!imageUrl) throw new Error('No image URL in response');
 
         // Fetch image as blob → data URL so Canvas sampling works (avoids taint)
+        const imgController = new AbortController();
+        const imgTimeoutId = setTimeout(() => imgController.abort(), 15000);
+
         const imgRes = await fetch(imageUrl, {
-          signal: AbortSignal.timeout(15000),
+          signal: imgController.signal,
           mode: 'cors'
         });
+        clearTimeout(imgTimeoutId);
+
         if (!imgRes.ok) throw new Error('img fetch failed');
         const blob    = await imgRes.blob();
         const dataUrl = await blobToDataURL(blob);
         applyBg(dataUrl, '动漫壁纸');
-        setStatus('加载成功');
+        setStatus('加载成功 ✓');
         lastErr = null;
         break;
       } catch (err) {
         lastErr = err;
-        console.warn(`Failed to fetch from ${endpoint.type}:`, err);
+        console.warn(`Failed to fetch from ${endpoint.type}:`, err.message || err);
         // Continue to next API
       }
     }
 
     if (lastErr) {
-      setStatus('加载失败，请稍后重试');
+      setStatus('加载失败，请稍后重试或上传本地图片');
       console.error('All background APIs failed:', lastErr);
     }
     btn.innerHTML = origText;
@@ -1331,6 +1356,19 @@ const SettingsPanel = (() => {
         `rgb(${Math.min(255, rgb.r + 30)}, ${Math.min(255, rgb.g + 30)}, ${Math.min(255, rgb.b + 30)})`);
       root.style.setProperty('--primary-dark',
         `rgb(${Math.max(0, rgb.r - 30)}, ${Math.max(0, rgb.g - 30)}, ${Math.max(0, rgb.b - 30)})`);
+
+      // Update alpha variants for theme consistency
+      root.style.setProperty('--primary-alpha-06', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`);
+      root.style.setProperty('--primary-alpha-08', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`);
+      root.style.setProperty('--primary-alpha-10', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`);
+      root.style.setProperty('--primary-alpha-12', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`);
+      root.style.setProperty('--primary-alpha-15', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`);
+      root.style.setProperty('--primary-alpha-20', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`);
+      root.style.setProperty('--primary-alpha-25', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`);
+      root.style.setProperty('--primary-alpha-30', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.30)`);
+      root.style.setProperty('--primary-alpha-40', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.40)`);
+      root.style.setProperty('--primary-alpha-50', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.50)`);
+      root.style.setProperty('--primary-alpha-60', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.60)`);
     }
 
     root.style.setProperty('--accent', accent);
