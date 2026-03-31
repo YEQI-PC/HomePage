@@ -17,9 +17,11 @@ const LS = {
   RECENT:     'hp_recent',
   BOOKMARKS:  'hp_bookmarks',
   BG:         'hp_bg',
+  BG_OPTIONS: 'hp_bg_options',
   ENGINE:     'hp_engine',
   CUSTOM_COLORS: 'hp_custom_colors',
   CURSOR_EFFECTS: 'hp_cursor_effects',
+  WIDGET_VISIBILITY: 'hp_widget_visibility',
 };
 
 const ENGINES = {
@@ -557,7 +559,17 @@ const Todo = (() => {
 
   function updateCount(list) {
     const active = list.filter(t => !t.done).length;
-    $('#todo-count').textContent = active;
+    const total = list.length;
+
+    // Update main todo count (if element exists for legacy layout)
+    const todoCount = $('#todo-count');
+    if (todoCount) todoCount.textContent = active;
+
+    // Update compact widget count
+    const compactCount = $('#todo-count-compact');
+    if (compactCount) {
+      compactCount.textContent = active > 0 ? `${active} 项待办` : '无待办';
+    }
   }
 
   function render() {
@@ -634,20 +646,37 @@ const Todo = (() => {
 const Notes = (() => {
   let saveTimer = null;
 
+  function updatePreview(text) {
+    const preview = $('#notes-preview-compact');
+    if (preview) {
+      if (text.trim()) {
+        const firstLine = text.split('\n')[0].trim();
+        preview.textContent = firstLine.substring(0, 30) + (firstLine.length > 30 ? '...' : '');
+      } else {
+        preview.textContent = '无内容';
+      }
+    }
+  }
+
   function init() {
     const area = $('#notes-area');
     const indicator = $('#notes-saved');
 
-    area.value = lsGet(LS.NOTES, '');
+    const savedNotes = lsGet(LS.NOTES, '');
+    if (area) area.value = savedNotes;
+    updatePreview(savedNotes);
 
-    area.addEventListener('input', () => {
-      indicator.style.opacity = '0';
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => {
-        lsSet(LS.NOTES, area.value);
-        indicator.style.opacity = '1';
-      }, 800);
-    });
+    if (area) {
+      area.addEventListener('input', () => {
+        if (indicator) indicator.style.opacity = '0';
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          lsSet(LS.NOTES, area.value);
+          updatePreview(area.value);
+          if (indicator) indicator.style.opacity = '1';
+        }, 800);
+      });
+    }
   }
 
   return { init };
@@ -912,20 +941,36 @@ const Background = (() => {
     btn.innerHTML = '<span class="spinning">↻</span> 加载中…';
     btn.disabled = true;
 
-    // Attempt up to 3 times to handle transient rate-limits or network errors
-    const MAX_RETRIES = 3;
+    // Multiple API endpoints to try in case one fails
+    const API_ENDPOINTS = [
+      { url: 'https://api.waifu.pics/sfw/waifu', type: 'waifu.pics' },
+      { url: 'https://api.waifu.im/search/?included_tags=waifu&is_nsfw=false', type: 'waifu.im' },
+      { url: 'https://nekos.best/api/v2/neko', type: 'nekos.best' }
+    ];
+
     let lastErr;
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    for (const endpoint of API_ENDPOINTS) {
       try {
-        // Use CORS proxy to avoid tainted canvas issues
-        const res = await fetch('https://api.waifu.pics/sfw/waifu', {
+        const res = await fetch(endpoint.url, {
           signal: AbortSignal.timeout(10000),
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
-        const { url } = await res.json();
+        const data = await res.json();
+
+        // Extract URL based on API structure
+        let imageUrl;
+        if (endpoint.type === 'waifu.pics') {
+          imageUrl = data.url;
+        } else if (endpoint.type === 'waifu.im') {
+          imageUrl = data.images?.[0]?.url;
+        } else if (endpoint.type === 'nekos.best') {
+          imageUrl = data.results?.[0]?.url;
+        }
+
+        if (!imageUrl) throw new Error('No image URL in response');
 
         // Fetch image as blob → data URL so Canvas sampling works (avoids taint)
-        const imgRes = await fetch(url, {
+        const imgRes = await fetch(imageUrl, {
           signal: AbortSignal.timeout(15000),
           mode: 'cors'
         });
@@ -933,20 +978,19 @@ const Background = (() => {
         const blob    = await imgRes.blob();
         const dataUrl = await blobToDataURL(blob);
         applyBg(dataUrl, '动漫壁纸');
+        setStatus('加载成功');
         lastErr = null;
         break;
       } catch (err) {
         lastErr = err;
-        if (attempt < MAX_RETRIES) {
-          setStatus(`重试中 (${attempt}/${MAX_RETRIES})…`);
-          await new Promise(r => setTimeout(r, 800 * attempt));
-        }
+        console.warn(`Failed to fetch from ${endpoint.type}:`, err);
+        // Continue to next API
       }
     }
 
     if (lastErr) {
       setStatus('加载失败，请稍后重试');
-      console.error('Background fetch error:', lastErr);
+      console.error('All background APIs failed:', lastErr);
     }
     btn.innerHTML = origText;
     btn.disabled = false;
@@ -973,6 +1017,18 @@ const Background = (() => {
     const saved = lsGet(LS.BG, null);
     if (saved) applyBg(saved, '已保存');
 
+    // Restore saved background options
+    const savedOptions = lsGet(LS.BG_OPTIONS, {
+      displayMode: 'cover',
+      size: 100,
+      positionX: 50,
+      positionY: 50,
+      blur: 1,
+      opacity: 1,
+      saturation: 1
+    });
+    applyBgOptions(savedOptions);
+
     $('#fetch-anime-btn').addEventListener('click', fetchAnimeBackground);
 
     $('#bg-upload').addEventListener('change', e => {
@@ -982,6 +1038,110 @@ const Background = (() => {
     });
 
     $('#clear-bg-btn').addEventListener('click', clearBg);
+
+    // Initialize background controls
+    initBgControls(savedOptions);
+  }
+
+  function applyBgOptions(options) {
+    const bgLayer = $('#bg-layer');
+    const bgOverlay = $('#bg-overlay');
+
+    // Display mode
+    if (options.displayMode === 'custom') {
+      bgLayer.style.backgroundSize = `${options.size}%`;
+      bgLayer.style.backgroundPosition = `${options.positionX}% ${options.positionY}%`;
+    } else {
+      bgLayer.style.backgroundSize = options.displayMode;
+      bgLayer.style.backgroundPosition = 'center';
+    }
+
+    // Blur effect (applied to overlay)
+    bgOverlay.style.backdropFilter = `blur(${options.blur}px)`;
+
+    // Opacity
+    bgLayer.style.opacity = options.opacity;
+
+    // Saturation
+    bgLayer.style.filter = `saturate(${options.saturation})`;
+  }
+
+  function initBgControls(savedOptions) {
+    const displayMode = $('#bg-display-mode');
+    const customOptions = $('#bg-custom-options');
+    const bgSize = $('#bg-size');
+    const bgPosX = $('#bg-position-x');
+    const bgPosY = $('#bg-position-y');
+    const bgBlur = $('#bg-blur');
+    const bgBlurValue = $('#bg-blur-value');
+    const bgOpacity = $('#bg-opacity');
+    const bgOpacityValue = $('#bg-opacity-value');
+    const bgSaturation = $('#bg-saturation');
+    const bgSaturationValue = $('#bg-saturation-value');
+
+    // Set initial values
+    displayMode.value = savedOptions.displayMode;
+    bgSize.value = savedOptions.size;
+    bgPosX.value = savedOptions.positionX;
+    bgPosY.value = savedOptions.positionY;
+    bgBlur.value = savedOptions.blur;
+    bgBlurValue.textContent = `${savedOptions.blur}px`;
+    bgOpacity.value = savedOptions.opacity;
+    bgOpacityValue.textContent = `${Math.round(savedOptions.opacity * 100)}%`;
+    bgSaturation.value = savedOptions.saturation;
+    bgSaturationValue.textContent = `${Math.round(savedOptions.saturation * 100)}%`;
+
+    // Show/hide custom options
+    if (savedOptions.displayMode === 'custom') {
+      customOptions.classList.remove('hidden');
+    }
+
+    // Display mode change
+    displayMode.addEventListener('change', (e) => {
+      savedOptions.displayMode = e.target.value;
+      if (e.target.value === 'custom') {
+        customOptions.classList.remove('hidden');
+      } else {
+        customOptions.classList.add('hidden');
+      }
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
+
+    // Custom size/position
+    [bgSize, bgPosX, bgPosY].forEach(input => {
+      input.addEventListener('input', (e) => {
+        if (input === bgSize) savedOptions.size = parseFloat(e.target.value);
+        if (input === bgPosX) savedOptions.positionX = parseFloat(e.target.value);
+        if (input === bgPosY) savedOptions.positionY = parseFloat(e.target.value);
+        applyBgOptions(savedOptions);
+        lsSet(LS.BG_OPTIONS, savedOptions);
+      });
+    });
+
+    // Blur slider
+    bgBlur.addEventListener('input', (e) => {
+      savedOptions.blur = parseFloat(e.target.value);
+      bgBlurValue.textContent = `${savedOptions.blur}px`;
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
+
+    // Opacity slider
+    bgOpacity.addEventListener('input', (e) => {
+      savedOptions.opacity = parseFloat(e.target.value);
+      bgOpacityValue.textContent = `${Math.round(savedOptions.opacity * 100)}%`;
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
+
+    // Saturation slider
+    bgSaturation.addEventListener('input', (e) => {
+      savedOptions.saturation = parseFloat(e.target.value);
+      bgSaturationValue.textContent = `${Math.round(savedOptions.saturation * 100)}%`;
+      applyBgOptions(savedOptions);
+      lsSet(LS.BG_OPTIONS, savedOptions);
+    });
   }
 
   // ── Color math helpers ──
@@ -1053,11 +1213,58 @@ const SettingsPanel = (() => {
       if (e.key === 'Escape') close();
     });
 
+    // Initialize preset themes
+    initPresetThemes();
+
     // Initialize color pickers
     initColorPickers();
 
     // Initialize cursor effects toggle
     initCursorEffectsToggle();
+
+    // Initialize widget visibility toggles
+    initWidgetToggles();
+  }
+
+  function initPresetThemes() {
+    const presetBtns = $$('.theme-preset');
+    const primaryPicker = $('#primary-color-picker');
+    const accentPicker = $('#accent-color-picker');
+
+    // Mark active preset based on current colors
+    function updateActivePreset() {
+      const currentPrimary = primaryPicker.value.toLowerCase();
+      const currentAccent = accentPicker.value.toLowerCase();
+
+      presetBtns.forEach(btn => {
+        const presetPrimary = btn.dataset.primary.toLowerCase();
+        const presetAccent = btn.dataset.accent.toLowerCase();
+
+        if (presetPrimary === currentPrimary && presetAccent === currentAccent) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Apply preset theme when clicked
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const primary = btn.dataset.primary;
+        const accent = btn.dataset.accent;
+
+        primaryPicker.value = primary;
+        accentPicker.value = accent;
+
+        applyCustomColors(primary, accent);
+        lsSet(LS.CUSTOM_COLORS, { primary, accent });
+        updateActivePreset();
+      });
+    });
+
+    // Update active state on load
+    updateActivePreset();
   }
 
   function initColorPickers() {
@@ -1133,6 +1340,41 @@ const SettingsPanel = (() => {
     });
   }
 
+  function initWidgetToggles() {
+    const widgetTypes = ['clock', 'weather', 'todo', 'notes'];
+    const savedVisibility = lsGet(LS.WIDGET_VISIBILITY, {
+      clock: true,
+      weather: true,
+      todo: true,
+      notes: true
+    });
+
+    widgetTypes.forEach(type => {
+      const toggle = $(`#widget-${type}-toggle`);
+      const widget = $(`#${type}-widget-compact`);
+
+      if (!toggle || !widget) return;
+
+      // Set initial state
+      toggle.checked = savedVisibility[type];
+      if (!savedVisibility[type]) {
+        widget.classList.add('hidden');
+      }
+
+      // Handle toggle changes
+      toggle.addEventListener('change', (e) => {
+        savedVisibility[type] = e.target.checked;
+        lsSet(LS.WIDGET_VISIBILITY, savedVisibility);
+
+        if (e.target.checked) {
+          widget.classList.remove('hidden');
+        } else {
+          widget.classList.add('hidden');
+        }
+      });
+    });
+  }
+
   return { init };
 })();
 
@@ -1157,8 +1399,8 @@ const CursorEffects = (() => {
     // Track mouse movement
     document.addEventListener('mousemove', (e) => {
       if (!cursorDot) return;
-      cursorDot.style.left = e.clientX - 4 + 'px';
-      cursorDot.style.top = e.clientY - 4 + 'px';
+      cursorDot.style.left = e.clientX - 8 + 'px';
+      cursorDot.style.top = e.clientY - 8 + 'px';
       if (!cursorDot.classList.contains('active')) {
         cursorDot.classList.add('active');
       }
@@ -1172,7 +1414,7 @@ const CursorEffects = (() => {
   }
 
   function createClickParticles(x, y) {
-    const particleCount = 8;
+    const particleCount = 12;
     const angleStep = (Math.PI * 2) / particleCount;
 
     for (let i = 0; i < particleCount; i++) {
@@ -1181,7 +1423,7 @@ const CursorEffects = (() => {
       particle.style.top = y + 'px';
 
       const angle = angleStep * i;
-      const distance = 30 + Math.random() * 20;
+      const distance = 40 + Math.random() * 30;
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance;
 
@@ -1191,7 +1433,7 @@ const CursorEffects = (() => {
       document.body.appendChild(particle);
 
       // Remove particle after animation
-      setTimeout(() => particle.remove(), 600);
+      setTimeout(() => particle.remove(), 800);
     }
   }
 
