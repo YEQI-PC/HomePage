@@ -14,6 +14,9 @@ const LS = {
   SHORTCUTS:  'hp_shortcuts',
   TODO:       'hp_todo',
   NOTES:      'hp_notes',
+  CLIPBOARD_HISTORY: 'hp_clipboard_history',
+  CLIPBOARD_DRAFT: 'hp_clipboard_draft',
+  WEATHER_SETTINGS: 'hp_weather_settings',
   RECENT:     'hp_recent',
   BOOKMARKS:  'hp_bookmarks',
   BG:         'hp_bg',
@@ -54,18 +57,82 @@ const DEFAULT_SHORTCUTS = [
 ];
 
 const WEATHER_CODE_MAP = {
-  '113': 'SUN',  '116': 'PART', '119': 'CLD',  '122': 'OVR',
-  '143': 'FOG',  '176': 'DRZ',  '179': 'SLT',  '182': 'RAN',
-  '185': 'RAN',  '200': 'STM',  '227': 'SNW',  '230': 'SNW',
-  '248': 'FOG',  '260': 'FOG',  '263': 'DRZ',  '266': 'RAN',
-  '281': 'RAN',  '284': 'RAN',  '293': 'DRZ',  '296': 'RAN',
-  '299': 'RAN',  '302': 'RAN',  '305': 'STM',  '308': 'STM',
-  '311': 'RAN',  '314': 'RAN',  '317': 'SNW',  '320': 'SNW',
-  '323': 'SNW',  '326': 'SNW',  '329': 'SNW',  '332': 'SNW',
-  '335': 'SNW',  '338': 'SNW',  '350': 'RAN',  '353': 'DRZ',
-  '356': 'STM',  '359': 'STM',  '362': 'SNW',  '365': 'SNW',
-  '368': 'SNW',  '371': 'SNW',  '374': 'RAN',  '377': 'RAN',
-  '386': 'STM',  '389': 'STM',  '392': 'SNW',  '395': 'SNW',
+  '113': '☀',
+  '116': '⛅',
+  '119': '☁',
+  '122': '☁',
+  '143': '🌫',
+  '176': '🌦',
+  '179': '🌨',
+  '182': '🌧',
+  '185': '🌧',
+  '200': '⛈',
+  '227': '🌨',
+  '230': '🌨',
+  '248': '🌫',
+  '260': '🌫',
+  '263': '🌦',
+  '266': '🌧',
+  '281': '🌧',
+  '284': '🌧',
+  '293': '🌦',
+  '296': '🌧',
+  '299': '🌧',
+  '302': '🌧',
+  '305': '⛈',
+  '308': '⛈',
+  '311': '🌧',
+  '314': '🌧',
+  '317': '🌨',
+  '320': '🌨',
+  '323': '🌨',
+  '326': '🌨',
+  '329': '🌨',
+  '332': '🌨',
+  '335': '🌨',
+  '338': '🌨',
+  '350': '🌧',
+  '353': '🌦',
+  '356': '⛈',
+  '359': '⛈',
+  '362': '🌨',
+  '365': '🌨',
+  '368': '🌨',
+  '371': '🌨',
+  '374': '🌨',
+  '377': '🌧',
+  '386': '⛈',
+  '389': '⛈',
+  '392': '🌨',
+  '395': '🌨',
+};
+
+const SHORTCUT_GROUP_LABELS = {
+  Daily: '常用',
+  Tools: '工具',
+  Learn: '学习',
+  Campus: 'Beihang 北航',
+};
+
+const SHORTCUT_DESCRIPTION_LABELS = {
+  'Search engine': '搜索引擎',
+  'Code hosting': '代码托管',
+  'Video platform': '视频平台',
+  'Anime and video': '动漫与视频',
+  'Social feed': '社交动态',
+  'AI assistant': 'AI 助手',
+  'Notes and docs': '笔记与文档',
+  'Design tool': '设计工具',
+  'Online editor': '在线编辑器',
+  'Web docs': 'Web 文档',
+  'Developer Q&A': '开发者问答',
+  'Algorithms': '算法练习',
+  'Reference': '百科参考',
+  'Graduate system': '研究生系统',
+  'Campus mail': '校园邮箱',
+  'Academic portal': '教务入口',
+  'Library portal': '图书馆入口',
+  'Campus VPN': '校园 VPN',
 };
 
 /* ================================================================
@@ -101,10 +168,10 @@ function uid() {
 
 function timeAgo(ts) {
   const diff = (Date.now() - ts) / 1000;
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 60) return '刚刚';
+  if (diff < 3600) return `${Math.floor(diff / 60)} 分钟前`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} 小时前`;
+  return `${Math.floor(diff / 86400)} 天前`;
 }
 
 function sanitizeURL(url) {
@@ -113,6 +180,28 @@ function sanitizeURL(url) {
     if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
     return u.href;
   } catch { return null; }
+}
+
+function clampNumber(value, min, max, fallback = min) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return fallback;
+  return Math.min(max, Math.max(min, num));
+}
+
+function setMeterWidth(id, value, max = 100) {
+  const node = $(`#${id}`);
+  if (!node) return;
+  const safeMax = Math.max(max, 1);
+  const percent = clampNumber((Number(value) / safeMax) * 100, 0, 100, 0);
+  node.style.width = `${percent}%`;
+}
+
+function localizeShortcutGroup(name) {
+  return SHORTCUT_GROUP_LABELS[name] || name;
+}
+
+function localizeShortcutDescription(desc) {
+  return SHORTCUT_DESCRIPTION_LABELS[desc] || desc;
 }
 
 /* ================================================================
@@ -411,10 +500,10 @@ const ThemePalette = (() => {
     const sourceValue = $('#theme-source-value');
     if (sourceValue) {
       sourceValue.textContent = activeState.source === 'manual'
-        ? 'Manual'
+        ? '手动'
         : activeState.source === 'background'
-          ? 'Wallpaper'
-          : 'Default';
+          ? '壁纸'
+          : '默认';
     }
   }
 
@@ -482,9 +571,18 @@ const ThemePalette = (() => {
    ================================================================ */
 
 const Clock = (() => {
-  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const DAYS = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
   function pad(n) { return String(n).padStart(2, '0'); }
+
+  function getWeekNumber(date) {
+    const target = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = target.getUTCDay() || 7;
+    target.setUTCDate(target.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(target.getUTCFullYear(), 0, 1));
+    return Math.ceil((((target - yearStart) / 86400000) + 1) / 7);
+  }
 
   function tick() {
     const now = new Date();
@@ -501,7 +599,7 @@ const Clock = (() => {
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
     const d = now.getDate();
-    const dateStr = `${DAYS[now.getDay()]} · ${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const dateStr = `${y}年${m}月${d}日 ${DAYS[now.getDay()]}`;
     dateEl.textContent = dateStr;
     if (dateLargeEl) dateLargeEl.textContent = dateStr;
   }
@@ -511,7 +609,7 @@ const Clock = (() => {
     setInterval(tick, 1000);
   }
 
-  return { init };
+  return { init, MONTHS, getWeekNumber };
 })();
 
 /* ================================================================
@@ -677,30 +775,33 @@ const Shortcuts = (() => {
 
     groups.forEach((items, groupName) => {
       const wrap = el('div', 'shortcut-group');
-
-      const titleRow = el('div', 'shortcut-group-title',
-        `<h2>${groupName}</h2><div class="group-divider"></div>`
-      );
-      wrap.appendChild(titleRow);
-
+      const shell = el('div', 'shortcut-group-shell');
+      const titleRow = el('div', 'shortcut-group-title');
+      const title = el('h2');
+      const divider = el('div', 'group-divider');
       const grid = el('div', 'shortcut-grid');
+      title.textContent = localizeShortcutGroup(groupName);
+      titleRow.append(title, divider);
       grid.dataset.group = groupName;
 
-      items.forEach((item, index) => {
+      items.forEach(item => {
         const card = el('a', 'shortcut-card');
+        const icon = el('span', 'shortcut-icon');
+        const name = el('span', 'shortcut-name');
         card.href   = item.url;
         card.target = '_blank';
         card.rel    = 'noopener noreferrer';
-        card.title  = item.desc || item.name;
+        card.title  = localizeShortcutDescription(item.desc || item.name);
         card.dataset.id = item.id;
         card.draggable = true;
-        card.innerHTML = `
-          <span class="shortcut-icon">${item.icon || '🔗'}</span>
-          <span class="shortcut-name">${item.name}</span>
-          ${item.desc ? `<span class="shortcut-desc">${item.desc}</span>` : ''}
-        `;
-
-        // Add drag and drop event listeners
+        icon.textContent = item.icon || 'GO';
+        name.textContent = item.name;
+        card.append(icon, name);
+        if (item.desc) {
+          const desc = el('span', 'shortcut-desc');
+          desc.textContent = localizeShortcutDescription(item.desc);
+          card.appendChild(desc);
+        }
         card.addEventListener('dragstart', handleDragStart);
         card.addEventListener('dragover', handleDragOver);
         card.addEventListener('drop', handleDrop);
@@ -717,7 +818,8 @@ const Shortcuts = (() => {
         grid.appendChild(card);
       });
 
-      wrap.appendChild(grid);
+      shell.append(titleRow, grid);
+      wrap.appendChild(shell);
       section.appendChild(wrap);
     });
 
@@ -806,11 +908,11 @@ const Shortcuts = (() => {
         <span class="sm-icon">${item.icon || '🔗'}</span>
         <div class="sm-info">
           <div class="sm-name">${item.name}</div>
-          <div class="sm-group">${item.group}</div>
+          <div class="sm-group">${localizeShortcutGroup(item.group)}</div>
         </div>
         <div class="sm-actions">
-          <button class="sm-btn edit" title="编辑">✏️</button>
-          <button class="sm-btn del" title="删除">🗑️</button>
+          <button class="sm-btn edit" title="编辑">✎</button>
+          <button class="sm-btn del" title="删除">×</button>
         </div>
       `;
       row.querySelector('.edit').addEventListener('click', () => ShortcutModal.openEdit(item));
@@ -887,7 +989,7 @@ const ShortcutModal = (() => {
       e.preventDefault();
       const id    = $('#shortcut-edit-id').value;
       const url   = sanitizeURL($('#shortcut-url').value.trim());
-      if (!url) { alert('请输入有效的 URL'); return; }
+      if (!url) { alert('请输入有效的链接地址'); return; }
 
       const data = {
         name:  $('#shortcut-name').value.trim(),
@@ -1098,7 +1200,7 @@ const Recent = (() => {
   function init() {
     render();
     $('#clear-recent-btn').addEventListener('click', () => {
-      if (confirm('确认清除所有访问记录？')) clear();
+      if (confirm('确认清空全部最近访问记录吗？')) clear();
     });
   }
 
@@ -1118,7 +1220,7 @@ const Bookmarks = (() => {
     const list = load();
 
     if (list.length === 0) {
-      grid.innerHTML = '<p class="empty-hint">暂无收藏，点击"+ 添加"</p>';
+      grid.innerHTML = '<p class="empty-hint">暂无书签，点击右上角添加</p>';
       return;
     }
 
@@ -1183,7 +1285,7 @@ const BookmarkModal = (() => {
     $('#bookmark-form').addEventListener('submit', e => {
       e.preventDefault();
       const url = sanitizeURL($('#bookmark-url').value.trim());
-      if (!url) { alert('请输入有效的 URL'); return; }
+      if (!url) { alert('请输入有效的链接地址'); return; }
 
       Bookmarks.add({
         name: $('#bookmark-name').value.trim(),
@@ -1304,8 +1406,8 @@ const Background = (() => {
   async function fetchAnimeBackground() {
     const btn = $('#fetch-anime-btn');
     const origText = btn.innerHTML;
-    setStatus('Loading random wallpaper...');
-    btn.innerHTML = '<span class="spinning">↻</span> Loading...';
+    setStatus('正在加载随机壁纸...');
+    btn.innerHTML = '<span class="spinning">↻</span> 加载中...';
     btn.disabled = true;
 
     let lastErr = null;
@@ -1341,8 +1443,8 @@ const Background = (() => {
             }
 
             const dataUrl = await fetchImageAsDataUrl(imageUrl);
-            applyBg(dataUrl, 'Random wallpaper updated');
-            setStatus('Wallpaper loaded');
+            applyBg(dataUrl, '随机壁纸已更新');
+            setStatus('壁纸已更新');
             return;
           }
         } catch (err) {
@@ -1355,8 +1457,8 @@ const Background = (() => {
       for (const fallbackUrl of CURATED_FALLBACKS) {
         try {
           const dataUrl = await fetchImageAsDataUrl(fallbackUrl);
-          applyBg(dataUrl, 'Fallback wallpaper applied');
-          setStatus('Using fallback wallpaper');
+          applyBg(dataUrl, '已应用备用壁纸');
+          setStatus('已切换到备用壁纸');
           return;
         } catch (err) {
           lastErr = err;
@@ -1364,7 +1466,7 @@ const Background = (() => {
         }
       }
 
-      setStatus('Wallpaper unavailable right now. Try again or upload a local image.');
+      setStatus('暂时无法获取壁纸，请稍后重试或上传本地图片。');
       console.error('All background sources failed:', lastErr);
     } finally {
       btn.innerHTML = origText;
@@ -1401,7 +1503,7 @@ const Background = (() => {
   function handleUpload(file) {
     if (!file || !file.type.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onload = e => applyBg(e.target.result, file.name || 'Local image');
+    reader.onload = e => applyBg(e.target.result, file.name || '本地图片');
     reader.readAsDataURL(file);
   }
 
@@ -1488,7 +1590,7 @@ const Background = (() => {
   function init() {
     const savedTheme = lsGet(LS.BG_THEME, null);
     const saved = lsGet(LS.BG, null);
-    if (saved) applyBg(saved, 'Saved wallpaper restored', savedTheme);
+    if (saved) applyBg(saved, '已恢复上次壁纸', savedTheme);
 
     const savedOptions = lsGet(LS.BG_OPTIONS, {
       displayMode: 'cover',
@@ -1519,14 +1621,38 @@ const Background = (() => {
    ================================================================ */
 
 const SettingsPanel = (() => {
+  function syncWidgetStack() {
+    const stack = $('#widget-stack-left');
+    const clock = $('#clock-widget-compact');
+    const weather = $('#weather-widget-compact');
+    if (!stack || !clock || !weather) return;
+
+    const clockVisible = !clock.classList.contains('hidden');
+    const weatherVisible = !weather.classList.contains('hidden');
+    const visibleCount = Number(clockVisible) + Number(weatherVisible);
+
+    stack.classList.toggle('hidden', visibleCount === 0);
+    stack.classList.toggle('single-view', visibleCount === 1);
+    clock.classList.toggle('widget-fill', clockVisible && !weatherVisible);
+    weather.classList.toggle('widget-fill', weatherVisible && !clockVisible);
+  }
+
   function open() {
-    $('#settings-panel').classList.add('open');
-    $('#settings-overlay').classList.add('open');
+    const panel = $('#settings-panel');
+    const overlay = $('#settings-overlay');
+    if (!panel || !overlay || panel.classList.contains('open')) return;
+    panel.classList.add('open');
+    overlay.classList.add('open');
+    OverlayLock.lock();
   }
 
   function close() {
-    $('#settings-panel').classList.remove('open');
-    $('#settings-overlay').classList.remove('open');
+    const panel = $('#settings-panel');
+    const overlay = $('#settings-overlay');
+    if (!panel || !overlay || !panel.classList.contains('open')) return;
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+    OverlayLock.unlock();
   }
 
   function init() {
@@ -1545,7 +1671,7 @@ const SettingsPanel = (() => {
   }
 
   function initPresetThemes() {
-    const presetBtns = $('.theme-preset');
+    const presetBtns = $$('.theme-preset');
     const primaryPicker = $('#primary-color-picker');
     const accentPicker = $('#accent-color-picker');
 
@@ -1593,13 +1719,17 @@ const SettingsPanel = (() => {
   }
 
   function initWidgetToggles() {
-    const widgetTypes = ['clock', 'weather', 'todo', 'notes'];
+    const widgetTypes = ['clock', 'weather', 'todo', 'clipboard'];
     const savedVisibility = lsGet(LS.WIDGET_VISIBILITY, {
       clock: true,
       weather: true,
       todo: true,
-      notes: true,
+      clipboard: true,
     });
+
+    if (typeof savedVisibility.clipboard !== 'boolean' && typeof savedVisibility.notes === 'boolean') {
+      savedVisibility.clipboard = savedVisibility.notes;
+    }
 
     widgetTypes.forEach(type => {
       const toggle = $(`#widget-${type}-toggle`);
@@ -1613,8 +1743,11 @@ const SettingsPanel = (() => {
         savedVisibility[type] = e.target.checked;
         lsSet(LS.WIDGET_VISIBILITY, savedVisibility);
         widget.classList.toggle('hidden', !e.target.checked);
+        syncWidgetStack();
       });
     });
+
+    syncWidgetStack();
   }
 
   return { init };
@@ -1872,35 +2005,885 @@ const CursorEffects = (() => {
   return { init, toggle };
 })();
 
+const OverlayLock = (() => {
+  let count = 0;
+
+  function sync() {
+    document.body.classList.toggle('overlay-open', count > 0);
+  }
+
+  function lock() {
+    count += 1;
+    sync();
+  }
+
+  function unlock() {
+    count = Math.max(0, count - 1);
+    sync();
+  }
+
+  return { lock, unlock };
+})();
+
+const WeatherWidget = (() => {
+  let latest = null;
+  const DAY_LABELS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+  function loadSettings() {
+    const settings = lsGet(LS.WEATHER_SETTINGS, { location: '' });
+    return {
+      location: typeof settings?.location === 'string' ? settings.location.trim() : '',
+    };
+  }
+
+  function saveSettings(settings) {
+    const next = {
+      location: typeof settings?.location === 'string' ? settings.location.trim() : '',
+    };
+    lsSet(LS.WEATHER_SETTINGS, next);
+    return next;
+  }
+
+  function setSettingsStatus(message, isError = false) {
+    const node = $('#weather-settings-status');
+    if (!node) return;
+    node.textContent = message;
+    node.classList.toggle('is-error', isError);
+  }
+
+  function syncSettingsControls() {
+    const input = $('#weather-location-input');
+    if (!input) return;
+    input.value = loadSettings().location;
+  }
+
+  function showLoadingCard() {
+    const loadingEl = $('#weather-loading');
+    if (!loadingEl) return;
+    loadingEl.innerHTML = '<div class="shimmer-line"></div><div class="shimmer-line short"></div>';
+    loadingEl.classList.remove('hidden');
+  }
+
+  function pickHourlySample(hourly = [], preferredHour = 1200) {
+    if (!Array.isArray(hourly) || hourly.length === 0) return null;
+    return hourly.reduce((closest, entry) => {
+      const current = Math.abs(clampNumber(entry?.time, 0, 2400, preferredHour) - preferredHour);
+      const previous = Math.abs(clampNumber(closest?.time, 0, 2400, preferredHour) - preferredHour);
+      return current < previous ? entry : closest;
+    }, hourly[0]);
+  }
+
+  function getRainChance(hourly = []) {
+    return hourly.reduce((max, item) => {
+      return Math.max(max, clampNumber(item?.chanceofrain, 0, 100, 0));
+    }, 0);
+  }
+
+  function getForecastLabel(dateString, index) {
+    if (index === 0) return '今天';
+    if (index === 1) return '明天';
+    const date = new Date(`${dateString}T12:00:00`);
+    return Number.isNaN(date.getTime()) ? dateString : DAY_LABELS[date.getDay()];
+  }
+
+  function renderForecast(items) {
+    const list = $('#weather-forecast-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!items.length) {
+      list.innerHTML = '<p class="weather-empty-hint">暂无近期天气数据。</p>';
+      return;
+    }
+
+    items.forEach(item => {
+      const row = el('div', 'weather-forecast-item');
+      const day = el('div', 'weather-forecast-day');
+      const icon = el('span', 'weather-forecast-icon');
+      const desc = el('span', 'weather-forecast-desc');
+      const temps = el('div', 'weather-forecast-temps');
+      const meta = el('div', 'weather-forecast-meta');
+
+      day.textContent = item.label;
+      icon.textContent = item.icon;
+      desc.textContent = item.desc;
+      temps.textContent = `${item.max} / ${item.min}`;
+      meta.textContent = `降雨 ${item.rainChance}% · 紫外线 ${item.uv}`;
+
+      row.append(day, icon, desc, temps, meta);
+      list.appendChild(row);
+    });
+  }
+
+  function render(model) {
+    $('#weather-icon').textContent = model.icon;
+    $('#weather-location').textContent = model.location;
+    $('#weather-temp').textContent = model.temp;
+    $('#weather-desc').textContent = model.desc;
+    $('#weather-feels').textContent = `体感 ${model.feelsLike}`;
+    $('#weather-rain-chance').textContent = `${model.rainChance}%`;
+    $('#weather-humidity').textContent = `${model.humidity}%`;
+    $('#weather-wind').textContent = `风速 ${model.wind}`;
+    $('#weather-uv').textContent = `紫外线 ${model.uv}`;
+    setMeterWidth('weather-rain-bar', model.rainChance);
+    setMeterWidth('weather-humidity-bar', model.humidity);
+
+    $('#weather-icon-large').textContent = model.icon;
+    $('#weather-location-large').textContent = model.location;
+    $('#weather-temp-large').textContent = model.temp;
+    $('#weather-desc-large').textContent = model.desc;
+    $('#weather-feels-large').textContent = model.feelsLike;
+    $('#weather-humidity-large').textContent = `${model.humidity}%`;
+    $('#weather-wind-large').textContent = model.wind;
+    $('#weather-rain-large').textContent = `${model.rainChance}%`;
+    $('#weather-uv-large').textContent = String(model.uv);
+    renderForecast(model.forecast);
+
+    const loadingEl = $('#weather-loading');
+    const contentEl = $('#weather-content');
+    if (loadingEl) loadingEl.classList.add('hidden');
+    if (contentEl) contentEl.classList.remove('hidden');
+  }
+
+  async function fetchWeather({ silent = false } = {}) {
+    const settings = loadSettings();
+    const loadingEl = $('#weather-loading');
+    const contentEl = $('#weather-content');
+    const endpoint = settings.location
+      ? `https://wttr.in/${encodeURIComponent(settings.location)}?format=j1`
+      : 'https://wttr.in/?format=j1';
+
+    if (!latest) {
+      showLoadingCard();
+      if (contentEl) contentEl.classList.add('hidden');
+    }
+
+    if (!silent) {
+      setSettingsStatus(
+        settings.location ? `正在刷新 ${settings.location} 的天气...` : '正在刷新自动定位天气...'
+      );
+    }
+
+    try {
+      const res = await fetch(endpoint, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      const cur = data.current_condition?.[0];
+      if (!cur) throw new Error('No current condition');
+
+      const forecast = (data.weather || []).slice(0, 5).map((day, index) => {
+        const hourly = Array.isArray(day.hourly) ? day.hourly : [];
+        const sample = pickHourlySample(hourly) || {};
+        const code = sample.weatherCode || cur.weatherCode;
+        return {
+          label: getForecastLabel(day.date, index),
+          icon: WEATHER_CODE_MAP[String(code)] ?? '☁',
+          desc: sample.lang_zh?.[0]?.value ?? sample.weatherDesc?.[0]?.value ?? '天气',
+          max: `${day.maxtempC}°C`,
+          min: `${day.mintempC}°C`,
+          rainChance: getRainChance(hourly),
+          uv: sample.uvIndex ?? cur.uvIndex ?? '--',
+        };
+      });
+
+      latest = {
+        icon: WEATHER_CODE_MAP[String(cur.weatherCode)] ?? '☁',
+        location: settings.location || data.nearest_area?.[0]?.areaName?.[0]?.value || '当前位置',
+        temp: `${cur.temp_C}°C`,
+        feelsLike: `${cur.FeelsLikeC}°C`,
+        desc: cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '天气',
+        humidity: clampNumber(cur.humidity, 0, 100, 0),
+        wind: `${cur.windspeedKmph} km/h`,
+        rainChance: forecast[0]?.rainChance ?? clampNumber(cur.precipMM, 0, 100, 0),
+        uv: cur.uvIndex ?? forecast[0]?.uv ?? '--',
+        forecast,
+      };
+
+      render(latest);
+      if (!silent) {
+        setSettingsStatus(
+          settings.location
+            ? `天气已更新，当前位置：${latest.location}`
+            : `天气已更新，当前为自动定位：${latest.location}`
+        );
+      }
+    } catch (err) {
+      if (loadingEl) {
+        loadingEl.innerHTML = '<span class="weather-error">天气获取失败</span>';
+        if (!latest) loadingEl.classList.remove('hidden');
+      }
+      if (contentEl && !latest) {
+        contentEl.classList.add('hidden');
+      }
+      if (!silent) {
+        setSettingsStatus(
+          settings.location
+            ? `无法获取 ${settings.location} 的天气，请检查位置名称或稍后重试。`
+            : '自动定位天气获取失败，请稍后重试。',
+          true
+        );
+      }
+      console.warn('Weather fetch failed:', err);
+    }
+  }
+
+  function bindSettingsControls() {
+    const input = $('#weather-location-input');
+    const saveBtn = $('#weather-location-save-btn');
+    const refreshBtn = $('#weather-refresh-btn');
+    if (!input || !saveBtn || !refreshBtn) return;
+
+    syncSettingsControls();
+    const currentSettings = loadSettings();
+    setSettingsStatus(currentSettings.location ? `已保存天气位置：${currentSettings.location}` : '留空时使用自动定位天气。');
+
+    const saveLocation = () => {
+      const location = input.value.trim();
+      saveSettings({ location });
+      setSettingsStatus(location ? `已保存天气位置：${location}` : '已切换为自动定位天气。');
+      fetchWeather();
+    };
+
+    saveBtn.addEventListener('click', saveLocation);
+    refreshBtn.addEventListener('click', () => fetchWeather());
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveLocation();
+      }
+    });
+  }
+
+  function init() {
+    bindSettingsControls();
+    fetchWeather();
+    setInterval(() => fetchWeather({ silent: true }), 30 * 60 * 1000);
+  }
+
+  return { init, fetchWeather, getLatest: () => latest };
+})();
+
+const TodoBoard = (() => {
+  function load() {
+    const list = lsGet(LS.TODO, []);
+    return Array.isArray(list) ? list : [];
+  }
+
+  function save(list) {
+    lsSet(LS.TODO, list);
+  }
+
+  function getCounts(list) {
+    const active = list.filter(item => !item.done).length;
+    const done = list.length - active;
+    return { active, done, total: list.length };
+  }
+
+  function ordered(list) {
+    return [...list].sort((a, b) => Number(a.done) - Number(b.done));
+  }
+
+  function createTodoItem(item, compact = false) {
+    const row = el('li', `todo-item${item.done ? ' done' : ''}${compact ? ' todo-item-compact' : ''}`);
+    const checkbox = document.createElement('input');
+    const text = el('span', 'todo-text');
+    const removeBtn = el('button', 'todo-del');
+
+    row.dataset.id = item.id;
+    checkbox.type = 'checkbox';
+    checkbox.checked = Boolean(item.done);
+    checkbox.setAttribute('aria-label', '完成代办');
+
+    text.textContent = item.text;
+    removeBtn.type = 'button';
+    removeBtn.title = '删除代办';
+    removeBtn.textContent = '×';
+
+    checkbox.addEventListener('change', () => toggle(item.id));
+    removeBtn.addEventListener('click', () => remove(item.id));
+
+    row.append(checkbox, text, removeBtn);
+    return row;
+  }
+
+  function renderList(targetId, list, compact = false, limit = null) {
+    const container = $(`#${targetId}`);
+    if (!container) return;
+
+    container.innerHTML = '';
+    const source = ordered(list);
+    const visibleItems = typeof limit === 'number' ? source.slice(0, limit) : source;
+
+    if (visibleItems.length === 0) {
+      container.innerHTML = `<li class="todo-empty-hint">${compact ? '当前没有待办事项。' : '还没有添加待办。'}</li>`;
+      return;
+    }
+
+    visibleItems.forEach(item => container.appendChild(createTodoItem(item, compact)));
+
+    if (compact && list.length > visibleItems.length) {
+      const more = el('li', 'todo-more-hint');
+      more.textContent = `还有 ${list.length - visibleItems.length} 项未展示`;
+      container.appendChild(more);
+    }
+  }
+
+  function render() {
+    const list = load();
+    const counts = getCounts(list);
+
+    const compactActive = $('#todo-count-compact');
+    const compactDone = $('#todo-done-count-compact');
+    const modalActive = $('#todo-active-count-modal');
+    const modalDone = $('#todo-done-count-modal');
+    const modalTotal = $('#todo-total-count-modal');
+
+    if (compactActive) compactActive.textContent = counts.active;
+    if (compactDone) compactDone.textContent = counts.done;
+    if (modalActive) modalActive.textContent = counts.active;
+    if (modalDone) modalDone.textContent = counts.done;
+    if (modalTotal) modalTotal.textContent = counts.total;
+
+    renderList('todo-card-list', list, true, 4);
+    renderList('todo-list', list, false);
+  }
+
+  function add(text) {
+    const value = String(text || '').trim();
+    if (!value) return;
+    const list = load();
+    list.unshift({ id: uid(), text: value, done: false, ts: Date.now() });
+    save(list);
+    render();
+  }
+
+  function toggle(id) {
+    const list = load();
+    const item = list.find(entry => entry.id === id);
+    if (!item) return;
+    item.done = !item.done;
+    save(list);
+    render();
+  }
+
+  function remove(id) {
+    save(load().filter(item => item.id !== id));
+    render();
+  }
+
+  function bindQuickInput(inputId, buttonId) {
+    const input = $(`#${inputId}`);
+    const button = $(`#${buttonId}`);
+    if (!input || !button) return;
+
+    const submit = () => {
+      add(input.value);
+      input.value = '';
+      input.focus();
+    };
+
+    button.addEventListener('click', submit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submit();
+      }
+    });
+  }
+
+  function init() {
+    render();
+    bindQuickInput('todo-card-input', 'todo-card-add-btn');
+    bindQuickInput('todo-input', 'todo-add-btn');
+  }
+
+  return { init, render };
+})();
+
+const ClipboardHub = (() => {
+  const MAX_ITEMS = 40;
+  let statusTimer = null;
+
+  function normalizeHistory(list) {
+    return list
+      .filter(item => item && typeof item.text === 'string')
+      .map(item => ({
+        id: item.id || uid(),
+        text: item.text,
+        ts: Number.isFinite(item.ts) ? item.ts : Date.now(),
+      }));
+  }
+
+  function loadHistory() {
+    const stored = lsGet(LS.CLIPBOARD_HISTORY, null);
+    if (Array.isArray(stored)) return normalizeHistory(stored);
+
+    const legacy = lsGet(LS.NOTES, '');
+    if (typeof legacy === 'string' && legacy.trim()) {
+      const migrated = [{ id: uid(), text: legacy.trim(), ts: Date.now() }];
+      lsSet(LS.CLIPBOARD_HISTORY, migrated);
+      return migrated;
+    }
+
+    return [];
+  }
+
+  function saveHistory(list) {
+    lsSet(LS.CLIPBOARD_HISTORY, normalizeHistory(list).slice(0, MAX_ITEMS));
+  }
+
+  function loadDraft() {
+    const stored = lsGet(LS.CLIPBOARD_DRAFT, null);
+    if (typeof stored === 'string') return stored;
+    const legacy = lsGet(LS.NOTES, '');
+    return typeof legacy === 'string' ? legacy : '';
+  }
+
+  function syncEditors(text, sourceId = '') {
+    ['clipboard-card-input', 'clipboard-area'].forEach(id => {
+      const node = $(`#${id}`);
+      if (!node || id === sourceId) return;
+      if (node.value !== text) node.value = text;
+    });
+  }
+
+  function setDraft(text, sourceId = '') {
+    lsSet(LS.CLIPBOARD_DRAFT, text);
+    syncEditors(text, sourceId);
+  }
+
+  function setStatus(message) {
+    const node = $('#clipboard-saved');
+    if (!node) return;
+    node.textContent = message;
+    node.classList.add('visible');
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(() => node.classList.remove('visible'), 1400);
+  }
+
+  function fallbackCopy(text) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+
+  async function copyText(text) {
+    const value = String(text || '').trim();
+    if (!value) {
+      setStatus('没有可复制的内容。');
+      return;
+    }
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        fallbackCopy(value);
+      }
+      setStatus('已复制到系统剪切板。');
+    } catch {
+      fallbackCopy(value);
+      setStatus('已复制到系统剪切板。');
+    }
+  }
+
+  function saveEntry(rawText = loadDraft()) {
+    const text = String(rawText || '').trim();
+    if (!text) {
+      setStatus('没有可保存的内容。');
+      return;
+    }
+
+    const history = loadHistory();
+    const existingIndex = history.findIndex(item => item.text === text);
+    if (existingIndex !== -1) {
+      const [existing] = history.splice(existingIndex, 1);
+      existing.ts = Date.now();
+      history.unshift(existing);
+    } else {
+      history.unshift({ id: uid(), text, ts: Date.now() });
+    }
+
+    saveHistory(history);
+    setDraft('');
+    render();
+    setStatus('已保存到本地历史。');
+  }
+
+  function remove(id) {
+    saveHistory(loadHistory().filter(item => item.id !== id));
+    render();
+  }
+
+  function clearAll() {
+    saveHistory([]);
+    render();
+    setStatus('历史已清空。');
+  }
+
+  function renderCardHistory(history) {
+    const container = $('#clipboard-card-history');
+    if (!container) return;
+
+    container.innerHTML = '';
+    if (!history.length) {
+      container.innerHTML = '<p class="clipboard-empty-hint">还没有保存任何内容。</p>';
+      return;
+    }
+
+    history.slice(0, 3).forEach(item => {
+      const row = el('div', 'clipboard-card-item');
+      const text = el('div', 'clipboard-card-item-text');
+      const time = el('div', 'clipboard-card-item-time');
+
+      text.textContent = item.text;
+      time.textContent = timeAgo(item.ts);
+      row.append(text, time);
+      container.appendChild(row);
+    });
+  }
+
+  function renderModalHistory(history) {
+    const container = $('#clipboard-history-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+    if (!history.length) {
+      container.innerHTML = '<p class="clipboard-empty-hint">还没有保存任何内容。</p>';
+      return;
+    }
+
+    history.forEach(item => {
+      const card = el('div', 'clipboard-history-item');
+      const content = el('div', 'clipboard-history-content');
+      const text = el('div', 'clipboard-history-text');
+      const meta = el('div', 'clipboard-history-meta');
+      const actions = el('div', 'clipboard-history-actions');
+      const loadBtn = el('button', 'btn-secondary btn-mini');
+      const copyBtn = el('button', 'btn-secondary btn-mini');
+      const deleteBtn = el('button', 'btn-secondary btn-mini btn-danger');
+
+      text.textContent = item.text;
+      meta.textContent = timeAgo(item.ts);
+
+      loadBtn.type = 'button';
+      loadBtn.textContent = '载入';
+      loadBtn.addEventListener('click', () => {
+        setDraft(item.text);
+        syncEditors(item.text);
+        const area = $('#clipboard-area');
+        if (area) area.focus();
+      });
+
+      copyBtn.type = 'button';
+      copyBtn.textContent = '复制';
+      copyBtn.addEventListener('click', () => copyText(item.text));
+
+      deleteBtn.type = 'button';
+      deleteBtn.textContent = '删除';
+      deleteBtn.addEventListener('click', () => remove(item.id));
+
+      actions.append(loadBtn, copyBtn, deleteBtn);
+      content.append(text, meta);
+      card.append(content, actions);
+      container.appendChild(card);
+    });
+  }
+
+  function render() {
+    const history = loadHistory();
+    const draft = loadDraft();
+
+    syncEditors(draft);
+
+    const count = $('#clipboard-count-compact');
+    if (count) count.textContent = `${history.length} 条记录`;
+
+    renderCardHistory(history);
+    renderModalHistory(history);
+  }
+
+  function bindEditor(id) {
+    const input = $(`#${id}`);
+    if (!input) return;
+
+    input.value = loadDraft();
+    input.addEventListener('input', () => setDraft(input.value, id));
+    input.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        saveEntry(input.value);
+      }
+    });
+  }
+
+  function init() {
+    render();
+    bindEditor('clipboard-card-input');
+    bindEditor('clipboard-area');
+
+    $('#clipboard-save-btn')?.addEventListener('click', () => saveEntry(loadDraft()));
+    $('#clipboard-modal-save-btn')?.addEventListener('click', () => saveEntry(loadDraft()));
+    $('#clipboard-copy-current-btn')?.addEventListener('click', () => copyText(loadDraft()));
+    $('#clipboard-clear-btn')?.addEventListener('click', clearAll);
+  }
+
+  return { init, render };
+})();
+
+const ClockCalendarModal = (() => {
+  let viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  function renderCalendar() {
+    const label = $('#calendar-month-label');
+    const grid = $('#calendar-grid');
+    if (!label || !grid) return;
+
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+    const today = new Date();
+    const firstDay = new Date(year, month, 1);
+    const offset = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    label.textContent = `${year}年${Clock.MONTHS[month]}`;
+    grid.innerHTML = '';
+
+    for (let i = 0; i < 42; i++) {
+      const cell = el('div', 'calendar-day');
+      const number = el('span', 'calendar-day-number');
+      let dayNumber = i - offset + 1;
+      let currentMonth = month;
+      let currentYear = year;
+
+      if (dayNumber <= 0) {
+        currentMonth = month - 1;
+        if (currentMonth < 0) {
+          currentMonth = 11;
+          currentYear -= 1;
+        }
+        dayNumber = daysInPrevMonth + dayNumber;
+        cell.classList.add('is-muted');
+      } else if (dayNumber > daysInMonth) {
+        currentMonth = month + 1;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear += 1;
+        }
+        dayNumber -= daysInMonth;
+        cell.classList.add('is-muted');
+      }
+
+      number.textContent = dayNumber;
+      cell.appendChild(number);
+
+      if (
+        dayNumber === today.getDate() &&
+        currentMonth === today.getMonth() &&
+        currentYear === today.getFullYear()
+      ) {
+        cell.classList.add('is-today');
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function open() {
+    const overlay = $('#clock-modal-overlay');
+    if (!overlay || overlay.classList.contains('open')) return;
+    viewDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    renderCalendar();
+    overlay.classList.add('open');
+    OverlayLock.lock();
+  }
+
+  function close() {
+    const overlay = $('#clock-modal-overlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+    OverlayLock.unlock();
+  }
+
+  function init() {
+    const card = $('#clock-widget-compact');
+    const openBtn = $('#clock-widget-open');
+    const closeBtn = $('#clock-modal-close');
+    const overlay = $('#clock-modal-overlay');
+
+    card?.addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      open();
+    });
+
+    openBtn?.addEventListener('click', e => {
+      e.stopPropagation();
+      open();
+    });
+
+    closeBtn?.addEventListener('click', close);
+    overlay?.addEventListener('click', e => {
+      if (e.target === overlay) close();
+    });
+
+    $('#clock-prev-month')?.addEventListener('click', () => {
+      viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    $('#clock-next-month')?.addEventListener('click', () => {
+      viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
+      renderCalendar();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay?.classList.contains('open')) close();
+    });
+  }
+
+  return { init, open, close };
+})();
+
+const WeatherDetailsModal = (() => {
+  function open() {
+    const overlay = $('#weather-modal-overlay');
+    if (!overlay || overlay.classList.contains('open')) return;
+    overlay.classList.add('open');
+    OverlayLock.lock();
+  }
+
+  function close() {
+    const overlay = $('#weather-modal-overlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+    OverlayLock.unlock();
+  }
+
+  function init() {
+    const card = $('#weather-widget-compact');
+    const openBtn = $('#weather-widget-open');
+    const closeBtn = $('#weather-modal-close');
+    const overlay = $('#weather-modal-overlay');
+
+    card?.addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      open();
+    });
+
+    openBtn?.addEventListener('click', e => {
+      e.stopPropagation();
+      open();
+    });
+
+    closeBtn?.addEventListener('click', close);
+    overlay?.addEventListener('click', e => {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay?.classList.contains('open')) close();
+    });
+  }
+
+  return { init, open, close };
+})();
+
+const TodoDetailsModal = (() => {
+  function open() {
+    const overlay = $('#todo-modal-overlay');
+    if (!overlay || overlay.classList.contains('open')) return;
+    overlay.classList.add('open');
+    OverlayLock.lock();
+    setTimeout(() => $('#todo-input')?.focus(), 80);
+  }
+
+  function close() {
+    const overlay = $('#todo-modal-overlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+    OverlayLock.unlock();
+  }
+
+  function init() {
+    const openBtn = $('#todo-widget-open');
+    const closeBtn = $('#todo-modal-close');
+    const overlay = $('#todo-modal-overlay');
+
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    overlay?.addEventListener('click', e => {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay?.classList.contains('open')) close();
+    });
+  }
+
+  return { init, open, close };
+})();
+
+const ClipboardHistoryModal = (() => {
+  function open() {
+    const overlay = $('#clipboard-modal-overlay');
+    if (!overlay || overlay.classList.contains('open')) return;
+    overlay.classList.add('open');
+    OverlayLock.lock();
+    setTimeout(() => $('#clipboard-area')?.focus(), 80);
+  }
+
+  function close() {
+    const overlay = $('#clipboard-modal-overlay');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    overlay.classList.remove('open');
+    OverlayLock.unlock();
+  }
+
+  function init() {
+    const openBtn = $('#clipboard-widget-open');
+    const closeBtn = $('#clipboard-modal-close');
+    const overlay = $('#clipboard-modal-overlay');
+
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    overlay?.addEventListener('click', e => {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay?.classList.contains('open')) close();
+    });
+  }
+
+  return { init, open, close };
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   ThemePalette.init();
   Clock.init();
-  Weather.init();
+  WeatherWidget.init();
   Search.init();
   Shortcuts.render();
   ShortcutModal.init();
-  Todo.init();
-  Notes.init();
-  ClockModal.init();
-  WeatherModal.init();
-  TodoModal.init();
-  NotesModal.init();
+  TodoBoard.init();
+  ClipboardHub.init();
+  ClockCalendarModal.init();
+  WeatherDetailsModal.init();
+  TodoDetailsModal.init();
+  ClipboardHistoryModal.init();
   Recent.init();
   Bookmarks.init();
   BookmarkModal.init();
   Background.init();
   SettingsPanel.init();
   CursorEffects.init();
-
-  // Add click listeners to open widget modals
-  const clockWidget = $('#clock-widget-compact');
-  if (clockWidget) {
-    clockWidget.addEventListener('click', () => ClockModal.open());
-  }
-
-  const weatherWidget = $('#weather-widget-compact');
-  if (weatherWidget) {
-    weatherWidget.addEventListener('click', () => WeatherModal.open());
-  }
 });
