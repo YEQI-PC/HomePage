@@ -18,6 +18,7 @@ const LS = {
   BOOKMARKS:  'hp_bookmarks',
   BG:         'hp_bg',
   BG_OPTIONS: 'hp_bg_options',
+  BG_THEME:   'hp_bg_theme',
   ENGINE:     'hp_engine',
   CUSTOM_COLORS: 'hp_custom_colors',
   CURSOR_EFFECTS: 'hp_cursor_effects',
@@ -25,50 +26,46 @@ const LS = {
 };
 
 const ENGINES = {
-  google: { label: 'Google',     icon: 'G',  url: 'https://www.google.com/search?q=' },
-  baidu:  { label: 'Baidu 百度', icon: '百', url: 'https://www.baidu.com/s?wd=' },
-  bing:   { label: 'Bing',       icon: 'B',  url: 'https://www.bing.com/search?q=' },
-  ddg:    { label: 'DuckDuckGo', icon: 'D',  url: 'https://duckduckgo.com/?q=' },
+  google: { label: 'Google',     icon: 'G', url: 'https://www.google.com/search?q=' },
+  baidu:  { label: 'Baidu',      icon: 'B', url: 'https://www.baidu.com/s?wd=' },
+  bing:   { label: 'Bing',       icon: 'B', url: 'https://www.bing.com/search?q=' },
+  ddg:    { label: 'DuckDuckGo', icon: 'D', url: 'https://duckduckgo.com/?q=' },
 };
 
 const DEFAULT_SHORTCUTS = [
-  // 常用
-  { id: 's1',  group: '常用',  name: 'Google',     url: 'https://www.google.com',    icon: '🔍', desc: '搜索引擎' },
-  { id: 's2',  group: '常用',  name: 'GitHub',     url: 'https://github.com',        icon: '🐙', desc: '代码托管' },
-  { id: 's3',  group: '常用',  name: 'YouTube',    url: 'https://www.youtube.com',   icon: '▶️', desc: '视频平台' },
-  { id: 's4',  group: '常用',  name: 'Bilibili',   url: 'https://www.bilibili.com',  icon: '📺', desc: 'B站' },
-  { id: 's5',  group: '常用',  name: 'Twitter/X',  url: 'https://x.com',             icon: '𝕏',  desc: '社交媒体' },
-  // 工具
-  { id: 's6',  group: '工具',  name: 'ChatGPT',    url: 'https://chat.openai.com',   icon: '🤖', desc: 'AI助手' },
-  { id: 's7',  group: '工具',  name: 'Notion',     url: 'https://www.notion.so',     icon: '📝', desc: '笔记协作' },
-  { id: 's8',  group: '工具',  name: 'Figma',      url: 'https://www.figma.com',     icon: '🎨', desc: '设计工具' },
-  { id: 's9',  group: '工具',  name: 'VS Code',    url: 'https://vscode.dev',        icon: '💻', desc: '在线编辑器' },
-  // 学习
-  { id: 's10', group: '学习',  name: 'MDN',        url: 'https://developer.mozilla.org', icon: '📖', desc: 'Web文档' },
-  { id: 's11', group: '学习',  name: 'Stack Overflow', url: 'https://stackoverflow.com', icon: '🧩', desc: '技术问答' },
-  { id: 's12', group: '学习',  name: 'LeetCode',   url: 'https://leetcode.com',      icon: '⚡', desc: '算法练习' },
-  { id: 's13', group: '学习',  name: 'Wikipedia',  url: 'https://www.wikipedia.org', icon: '📚', desc: '百科全书' },
-  // Beihang 北航
-  { id: 's14', group: 'Beihang 北航',  name: '研究生院',  url: 'https://gsmis.buaa.edu.cn', icon: '🎓', desc: '研究生管理系统' },
-  { id: 's15', group: 'Beihang 北航',  name: '北航邮箱',  url: 'https://mail.buaa.edu.cn',  icon: '📧', desc: '北航邮箱系统' },
-  { id: 's16', group: 'Beihang 北航',  name: '教务处',    url: 'https://jiaowu.buaa.edu.cn', icon: '📋', desc: '本科教务系统' },
-  { id: 's17', group: 'Beihang 北航',  name: '图书馆',    url: 'https://lib.buaa.edu.cn',    icon: '📚', desc: '北航图书馆' },
-  { id: 's18', group: 'Beihang 北航',  name: 'VPN',       url: 'https://e.buaa.edu.cn',      icon: '🔐', desc: '校园VPN' },
+  { id: 's1',  group: 'Daily',  name: 'Google',         url: 'https://www.google.com',        icon: 'GO', desc: 'Search engine' },
+  { id: 's2',  group: 'Daily',  name: 'GitHub',         url: 'https://github.com',            icon: 'GH', desc: 'Code hosting' },
+  { id: 's3',  group: 'Daily',  name: 'YouTube',        url: 'https://www.youtube.com',       icon: 'YT', desc: 'Video platform' },
+  { id: 's4',  group: 'Daily',  name: 'Bilibili',       url: 'https://www.bilibili.com',      icon: 'BI', desc: 'Anime and video' },
+  { id: 's5',  group: 'Daily',  name: 'Twitter/X',      url: 'https://x.com',                 icon: 'X',  desc: 'Social feed' },
+  { id: 's6',  group: 'Tools',  name: 'ChatGPT',        url: 'https://chat.openai.com',       icon: 'AI', desc: 'AI assistant' },
+  { id: 's7',  group: 'Tools',  name: 'Notion',         url: 'https://www.notion.so',         icon: 'NO', desc: 'Notes and docs' },
+  { id: 's8',  group: 'Tools',  name: 'Figma',          url: 'https://www.figma.com',         icon: 'FG', desc: 'Design tool' },
+  { id: 's9',  group: 'Tools',  name: 'VS Code',        url: 'https://vscode.dev',            icon: 'VS', desc: 'Online editor' },
+  { id: 's10', group: 'Learn',  name: 'MDN',            url: 'https://developer.mozilla.org', icon: 'MD', desc: 'Web docs' },
+  { id: 's11', group: 'Learn',  name: 'Stack Overflow', url: 'https://stackoverflow.com',     icon: 'SO', desc: 'Developer Q&A' },
+  { id: 's12', group: 'Learn',  name: 'LeetCode',       url: 'https://leetcode.com',          icon: 'LC', desc: 'Algorithms' },
+  { id: 's13', group: 'Learn',  name: 'Wikipedia',      url: 'https://www.wikipedia.org',     icon: 'WK', desc: 'Reference' },
+  { id: 's14', group: 'Campus', name: 'Graduate',       url: 'https://gsmis.buaa.edu.cn',     icon: 'GR', desc: 'Graduate system' },
+  { id: 's15', group: 'Campus', name: 'Mail',           url: 'https://mail.buaa.edu.cn',      icon: 'ML', desc: 'Campus mail' },
+  { id: 's16', group: 'Campus', name: 'Academic',       url: 'https://jiaowu.buaa.edu.cn',    icon: 'AC', desc: 'Academic portal' },
+  { id: 's17', group: 'Campus', name: 'Library',        url: 'https://lib.buaa.edu.cn',       icon: 'LB', desc: 'Library portal' },
+  { id: 's18', group: 'Campus', name: 'VPN',            url: 'https://e.buaa.edu.cn',         icon: 'VP', desc: 'Campus VPN' },
 ];
 
 const WEATHER_CODE_MAP = {
-  '113': '☀️', '116': '⛅', '119': '🌥️', '122': '☁️',
-  '143': '🌫️', '176': '🌦️', '179': '🌨️', '182': '🌧️',
-  '185': '🌧️', '200': '⛈️', '227': '🌨️', '230': '❄️',
-  '248': '🌫️', '260': '🌫️', '263': '🌦️', '266': '🌧️',
-  '281': '🌧️', '284': '🌧️', '293': '🌦️', '296': '🌧️',
-  '299': '🌧️', '302': '🌧️', '305': '⛈️', '308': '⛈️',
-  '311': '🌧️', '314': '🌧️', '317': '🌨️', '320': '🌨️',
-  '323': '🌨️', '326': '❄️', '329': '❄️', '332': '❄️',
-  '335': '❄️', '338': '❄️', '350': '🌧️', '353': '🌦️',
-  '356': '⛈️', '359': '⛈️', '362': '🌨️', '365': '🌨️',
-  '368': '🌨️', '371': '❄️', '374': '🌧️', '377': '🌧️',
-  '386': '⛈️', '389': '⛈️', '392': '🌨️', '395': '❄️',
+  '113': 'SUN',  '116': 'PART', '119': 'CLD',  '122': 'OVR',
+  '143': 'FOG',  '176': 'DRZ',  '179': 'SLT',  '182': 'RAN',
+  '185': 'RAN',  '200': 'STM',  '227': 'SNW',  '230': 'SNW',
+  '248': 'FOG',  '260': 'FOG',  '263': 'DRZ',  '266': 'RAN',
+  '281': 'RAN',  '284': 'RAN',  '293': 'DRZ',  '296': 'RAN',
+  '299': 'RAN',  '302': 'RAN',  '305': 'STM',  '308': 'STM',
+  '311': 'RAN',  '314': 'RAN',  '317': 'SNW',  '320': 'SNW',
+  '323': 'SNW',  '326': 'SNW',  '329': 'SNW',  '332': 'SNW',
+  '335': 'SNW',  '338': 'SNW',  '350': 'RAN',  '353': 'DRZ',
+  '356': 'STM',  '359': 'STM',  '362': 'SNW',  '365': 'SNW',
+  '368': 'SNW',  '371': 'SNW',  '374': 'RAN',  '377': 'RAN',
+  '386': 'STM',  '389': 'STM',  '392': 'SNW',  '395': 'SNW',
 };
 
 /* ================================================================
@@ -104,10 +101,10 @@ function uid() {
 
 function timeAgo(ts) {
   const diff = (Date.now() - ts) / 1000;
-  if (diff < 60)    return '刚刚';
-  if (diff < 3600)  return `${Math.floor(diff / 60)}分钟前`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}小时前`;
-  return `${Math.floor(diff / 86400)}天前`;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
 }
 
 function sanitizeURL(url) {
@@ -130,6 +127,9 @@ const Theme = (() => {
   function apply(t) {
     HTML.setAttribute('data-theme', t);
     lsSet(LS.THEME, t);
+    if (typeof ThemePalette !== 'undefined') {
+      ThemePalette.applyCurrent();
+    }
   }
 
   function toggle() {
@@ -144,12 +144,345 @@ const Theme = (() => {
   return { init, apply, get };
 })();
 
+const ThemePalette = (() => {
+  const DEFAULTS = {
+    light: { primary: '#8b7fd4', accent: '#c9a0dc' },
+    dark: { primary: '#9d92e0', accent: '#c9a0dc' },
+  };
+
+  function clamp(n, min, max) {
+    return Math.min(max, Math.max(min, n));
+  }
+
+  function getMode() {
+    return document.documentElement.getAttribute('data-theme') || lsGet(LS.THEME, 'light');
+  }
+
+  function hexToRgb(hex) {
+    const clean = String(hex).trim().replace('#', '');
+    const full = clean.length === 3 ? clean.split('').map(ch => ch + ch).join('') : clean;
+    const match = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(full);
+    if (!match) return null;
+    return {
+      r: parseInt(match[1], 16),
+      g: parseInt(match[2], 16),
+      b: parseInt(match[3], 16),
+    };
+  }
+
+  function parseColor(color) {
+    if (!color) return null;
+    if (typeof color === 'object' && Number.isFinite(color.r) && Number.isFinite(color.g) && Number.isFinite(color.b)) {
+      return {
+        r: clamp(Math.round(color.r), 0, 255),
+        g: clamp(Math.round(color.g), 0, 255),
+        b: clamp(Math.round(color.b), 0, 255),
+      };
+    }
+    if (Array.isArray(color) && color.length >= 3) {
+      return {
+        r: clamp(Math.round(color[0]), 0, 255),
+        g: clamp(Math.round(color[1]), 0, 255),
+        b: clamp(Math.round(color[2]), 0, 255),
+      };
+    }
+    if (typeof color !== 'string') return null;
+
+    const hex = hexToRgb(color);
+    if (hex) return hex;
+
+    const rgb = color.match(/\d+(\.\d+)?/g);
+    if (rgb && rgb.length >= 3) {
+      return {
+        r: clamp(Math.round(parseFloat(rgb[0])), 0, 255),
+        g: clamp(Math.round(parseFloat(rgb[1])), 0, 255),
+        b: clamp(Math.round(parseFloat(rgb[2])), 0, 255),
+      };
+    }
+    return null;
+  }
+
+  function rgbToHex(color) {
+    const rgb = parseColor(color);
+    if (!rgb) return null;
+    return `#${[rgb.r, rgb.g, rgb.b].map(v => v.toString(16).padStart(2, '0')).join('')}`;
+  }
+
+  function rgbToString(color) {
+    const rgb = parseColor(color);
+    return rgb ? `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` : '';
+  }
+
+  function rgba(color, alpha) {
+    const rgb = parseColor(color);
+    return rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})` : '';
+  }
+
+  function mixRgb(from, to, weight = 0.5) {
+    const a = parseColor(from);
+    const b = parseColor(to);
+    if (!a || !b) return a || b;
+    const w = clamp(weight, 0, 1);
+    return {
+      r: Math.round(a.r + (b.r - a.r) * w),
+      g: Math.round(a.g + (b.g - a.g) * w),
+      b: Math.round(a.b + (b.b - a.b) * w),
+    };
+  }
+
+  function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0;
+    let s = 0;
+    const l = (max + min) / 2;
+
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+
+    return [h, s, l];
+  }
+
+  function hslToRgb(h, s, l) {
+    let r;
+    let g;
+    let b;
+
+    if (s === 0) {
+      r = g = b = l;
+    } else {
+      const hue2rgb = (p, q, t) => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      };
+
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1 / 3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1 / 3);
+    }
+
+    return {
+      r: Math.round(r * 255),
+      g: Math.round(g * 255),
+      b: Math.round(b * 255),
+    };
+  }
+
+  function deriveAccent(primary) {
+    const rgb = parseColor(primary);
+    if (!rgb) return DEFAULTS[getMode()].accent;
+    const [h, s, l] = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    return rgbToHex(hslToRgb((h + 0.065) % 1, clamp(Math.max(s, 0.3), 0.22, 0.7), clamp(l + 0.12, 0.38, 0.78)));
+  }
+
+  function deriveTokens(primaryInput, accentInput, mode = getMode()) {
+    const base = DEFAULTS[mode] || DEFAULTS.light;
+    const primary = parseColor(primaryInput) || parseColor(base.primary);
+    const accent = parseColor(accentInput) || parseColor(deriveAccent(primary));
+
+    const primaryLight = mixRgb(primary, { r: 255, g: 255, b: 255 }, mode === 'dark' ? 0.22 : 0.16);
+    const primaryDark = mixRgb(primary, { r: 18, g: 20, b: 32 }, mode === 'dark' ? 0.34 : 0.24);
+    const surface = mode === 'dark'
+      ? mixRgb({ r: 18, g: 22, b: 34 }, primary, 0.14)
+      : mixRgb({ r: 248, g: 250, b: 255 }, primary, 0.08);
+    const surfaceAlt = mode === 'dark'
+      ? mixRgb({ r: 24, g: 28, b: 42 }, accent, 0.18)
+      : mixRgb({ r: 241, g: 245, b: 252 }, accent, 0.1);
+    const cardTint = mode === 'dark'
+      ? mixRgb({ r: 24, g: 28, b: 42 }, primary, 0.18)
+      : mixRgb({ r: 255, g: 255, b: 255 }, accent, 0.09);
+    const cardHover = mode === 'dark'
+      ? mixRgb(cardTint, primaryLight, 0.08)
+      : mixRgb(cardTint, primaryLight, 0.18);
+    const toolbar = mode === 'dark'
+      ? mixRgb({ r: 14, g: 16, b: 26 }, primary, 0.2)
+      : mixRgb({ r: 250, g: 252, b: 255 }, primary, 0.06);
+    const input = mode === 'dark'
+      ? mixRgb({ r: 19, g: 22, b: 34 }, accent, 0.1)
+      : mixRgb({ r: 255, g: 255, b: 255 }, primary, 0.04);
+    const overlayStart = mode === 'dark'
+      ? rgba(mixRgb({ r: 6, g: 8, b: 16 }, primary, 0.28), 0.8)
+      : rgba(mixRgb({ r: 251, g: 252, b: 255 }, primary, 0.18), 0.72);
+    const overlayEnd = mode === 'dark'
+      ? rgba(mixRgb({ r: 8, g: 10, b: 20 }, accent, 0.26), 0.58)
+      : rgba(mixRgb({ r: 245, g: 247, b: 255 }, accent, 0.12), 0.38);
+    const textPrimary = mode === 'dark'
+      ? mixRgb({ r: 235, g: 238, b: 248 }, primary, 0.08)
+      : mixRgb({ r: 39, g: 42, b: 58 }, primary, 0.08);
+    const textSecondary = mode === 'dark'
+      ? mixRgb({ r: 159, g: 165, b: 188 }, primary, 0.08)
+      : mixRgb({ r: 101, g: 109, b: 136 }, primary, 0.1);
+    const textMuted = mode === 'dark'
+      ? mixRgb({ r: 92, g: 97, b: 121 }, accent, 0.06)
+      : mixRgb({ r: 137, g: 145, b: 172 }, accent, 0.08);
+    const border = mode === 'dark' ? rgba(primary, 0.22) : rgba(primary, 0.18);
+    const focus = rgba(primary, mode === 'dark' ? 0.52 : 0.42);
+    const shadowColor = mode === 'dark' ? rgba(primaryDark, 0.36) : rgba(primaryDark, 0.14);
+
+    return {
+      '--primary': rgbToString(primary),
+      '--primary-light': rgbToString(primaryLight),
+      '--primary-dark': rgbToString(primaryDark),
+      '--accent': rgbToString(accent),
+      '--primary-alpha-06': rgba(primary, 0.06),
+      '--primary-alpha-08': rgba(primary, 0.08),
+      '--primary-alpha-10': rgba(primary, 0.1),
+      '--primary-alpha-12': rgba(primary, 0.12),
+      '--primary-alpha-15': rgba(primary, 0.15),
+      '--primary-alpha-20': rgba(primary, 0.2),
+      '--primary-alpha-25': rgba(primary, 0.25),
+      '--primary-alpha-30': rgba(primary, 0.3),
+      '--primary-alpha-40': rgba(primary, 0.4),
+      '--primary-alpha-50': rgba(primary, 0.5),
+      '--primary-alpha-60': rgba(primary, 0.6),
+      '--accent-alpha-10': rgba(accent, 0.1),
+      '--accent-alpha-18': rgba(accent, 0.18),
+      '--bg-primary': rgbToString(surface),
+      '--bg-secondary': rgbToString(surfaceAlt),
+      '--bg-card': rgba(cardTint, mode === 'dark' ? 0.78 : 0.8),
+      '--bg-card-hover': rgba(cardHover, mode === 'dark' ? 0.9 : 0.94),
+      '--bg-toolbar': rgba(toolbar, mode === 'dark' ? 0.88 : 0.82),
+      '--bg-input': rgba(input, mode === 'dark' ? 0.9 : 0.94),
+      '--bg-overlay': `linear-gradient(180deg, ${overlayStart} 0%, ${overlayEnd} 100%)`,
+      '--bg-sidebar': rgba(cardTint, mode === 'dark' ? 0.84 : 0.9),
+      '--text-primary': rgbToString(textPrimary),
+      '--text-secondary': rgbToString(textSecondary),
+      '--text-muted': rgbToString(textMuted),
+      '--text-link': rgbToString(primary),
+      '--border-color': border,
+      '--border-focus': focus,
+      '--shadow-sm': `0 10px 30px ${rgba(primaryDark, mode === 'dark' ? 0.14 : 0.08)}`,
+      '--shadow': `0 20px 48px ${shadowColor}`,
+      '--shadow-lg': `0 28px 68px ${rgba(primaryDark, mode === 'dark' ? 0.44 : 0.18)}`,
+      '--shadow-card': `0 16px 40px ${rgba(primaryDark, mode === 'dark' ? 0.24 : 0.12)}`,
+    };
+  }
+
+  function getSources() {
+    return {
+      manual: lsGet(LS.CUSTOM_COLORS, null),
+      background: lsGet(LS.BG_THEME, null),
+    };
+  }
+
+  function getActiveState() {
+    const mode = getMode();
+    const { manual, background } = getSources();
+    if (manual?.primary && manual?.accent) return { source: 'manual', colors: manual, mode };
+    if (background?.primary && background?.accent) return { source: 'background', colors: background, mode };
+    return { source: 'default', colors: DEFAULTS[mode] || DEFAULTS.light, mode };
+  }
+
+  function syncPresetButtons(primaryHex, accentHex) {
+    $$('.theme-preset').forEach(btn => {
+      const matches =
+        btn.dataset.primary?.toLowerCase() === primaryHex.toLowerCase() &&
+        btn.dataset.accent?.toLowerCase() === accentHex.toLowerCase();
+      btn.classList.toggle('active', matches);
+    });
+  }
+
+  function syncControls(activeState = getActiveState()) {
+    const primaryPicker = $('#primary-color-picker');
+    const accentPicker = $('#accent-color-picker');
+    const primaryHex = rgbToHex(activeState.colors.primary) || DEFAULTS[activeState.mode].primary;
+    const accentHex = rgbToHex(activeState.colors.accent) || DEFAULTS[activeState.mode].accent;
+
+    if (primaryPicker) primaryPicker.value = primaryHex;
+    if (accentPicker) accentPicker.value = accentHex;
+    syncPresetButtons(primaryHex, accentHex);
+
+    const sourceValue = $('#theme-source-value');
+    if (sourceValue) {
+      sourceValue.textContent = activeState.source === 'manual'
+        ? 'Manual'
+        : activeState.source === 'background'
+          ? 'Wallpaper'
+          : 'Default';
+    }
+  }
+
+  function applyCurrent() {
+    const activeState = getActiveState();
+    const tokens = deriveTokens(activeState.colors.primary, activeState.colors.accent, activeState.mode);
+    Object.entries(tokens).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(key, value);
+    });
+    syncControls(activeState);
+    return activeState;
+  }
+
+  function setManual(primary, accent) {
+    const normalized = {
+      primary: rgbToHex(primary) || DEFAULTS[getMode()].primary,
+      accent: rgbToHex(accent) || deriveAccent(primary),
+    };
+    lsSet(LS.CUSTOM_COLORS, normalized);
+    return applyCurrent();
+  }
+
+  function clearManual() {
+    lsSet(LS.CUSTOM_COLORS, null);
+    return applyCurrent();
+  }
+
+  function setBackground(primary, accent = null) {
+    const normalized = {
+      primary: rgbToHex(primary) || DEFAULTS[getMode()].primary,
+      accent: rgbToHex(accent) || deriveAccent(primary),
+    };
+    lsSet(LS.BG_THEME, normalized);
+    return applyCurrent();
+  }
+
+  function clearBackground() {
+    lsSet(LS.BG_THEME, null);
+    return applyCurrent();
+  }
+
+  function init() {
+    applyCurrent();
+  }
+
+  return {
+    init,
+    applyCurrent,
+    setManual,
+    clearManual,
+    setBackground,
+    clearBackground,
+    getActiveState,
+    rgbToHsl,
+    hslToRgb,
+    parseColor,
+    rgbToHex,
+    mixRgb,
+    clamp,
+  };
+})();
+
 /* ================================================================
    Clock
    ================================================================ */
 
 const Clock = (() => {
-  const DAYS = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -164,7 +497,7 @@ const Clock = (() => {
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
     const d = now.getDate();
-    dateEl.textContent = `${DAYS[now.getDay()]} · ${y}年${m}月${d}日`;
+    dateEl.textContent = `${DAYS[now.getDay()]} 路 ${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
   }
 
   function init() {
@@ -181,33 +514,33 @@ const Clock = (() => {
 
 const Weather = (() => {
   async function fetchWeather() {
-    const loadingEl  = $('#weather-loading');
-    const contentEl  = $('#weather-content');
+    const loadingEl = $('#weather-loading');
+    const contentEl = $('#weather-content');
 
     try {
       const res = await fetch('https://wttr.in/?format=j1', { signal: AbortSignal.timeout(8000) });
       if (!res.ok) throw new Error('HTTP ' + res.status);
 
       const data = await res.json();
-      const cur  = data.current_condition?.[0];
+      const cur = data.current_condition?.[0];
       if (!cur) throw new Error('no data');
 
       const code = cur.weatherCode;
-      const icon = WEATHER_CODE_MAP[String(code)] ?? '🌡️';
+      const icon = WEATHER_CODE_MAP[String(code)] ?? 'WX';
 
-      $('#weather-icon').textContent    = icon;
-      $('#weather-temp').textContent    = `${cur.temp_C}°C`;
+      $('#weather-icon').textContent = icon;
+      $('#weather-temp').textContent = `${cur.temp_C}掳C`;
       const feelsEl = $('#weather-feels');
-      if (feelsEl) feelsEl.textContent = `体感${cur.FeelsLikeC}°C`;
-      $('#weather-desc').textContent    = cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '';
-      $('#weather-humidity').textContent = `💧 ${cur.humidity}%`;
-      $('#weather-wind').textContent    = `🌬 ${cur.windspeedKmph}km/h`;
+      if (feelsEl) feelsEl.textContent = `Feels ${cur.FeelsLikeC}掳C`;
+      $('#weather-desc').textContent = cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '';
+      $('#weather-humidity').textContent = `H ${cur.humidity}%`;
+      $('#weather-wind').textContent = `W ${cur.windspeedKmph}km/h`;
 
       loadingEl.classList.add('hidden');
       contentEl.classList.remove('hidden');
     } catch (err) {
       if (loadingEl) {
-        loadingEl.innerHTML = `<span class="weather-error">天气获取失败</span>`;
+        loadingEl.innerHTML = '<span class="weather-error">Weather unavailable</span>';
       }
     }
   }
@@ -843,23 +1176,37 @@ const BookmarkModal = (() => {
    ================================================================ */
 
 const Background = (() => {
-  const bgLayer   = $('#bg-layer');
+  const bgLayer = $('#bg-layer');
   const bgPreview = $('#bg-preview');
-  const bgStatus  = $('#bg-status');
+  const bgStatus = $('#bg-status');
+  const REMOTE_WALLPAPER_ENDPOINTS = [
+    'https://www.loliapi.com/acg/',
+  ];
+  const CURATED_FALLBACKS = [
+    'https://s3.nyeki.dev/nekos-api/images/original/343c1754-c917-45d5-bd92-aca02244c07f.webp',
+    'https://s3.nyeki.dev/nekos-api/images/original/585213ef-2ea7-423f-93d0-e7fe7c8dc2b3.webp',
+    'https://s3.nyeki.dev/nekos-api/images/original/f66bb6c5-b7dc-4cc4-a15a-6851c811cf40.webp',
+    'https://s3.nyeki.dev/nekos-api/images/original/7a17a4af-508b-4ba7-9761-cbd76cc00cb3.webp',
+    'https://s3.nyeki.dev/nekos-api/images/original/6c0c5c4c-e65c-4f81-9de7-b302fd3401d0.webp',
+    'https://s3.nyeki.dev/nekos-api/images/original/e27f4deb-967a-448f-b41d-fe7ab067c166.webp',
+  ];
 
   function setStatus(msg) {
     if (bgStatus) bgStatus.textContent = msg;
   }
 
-  function applyBg(dataUrl, label = '') {
+  function applyBg(dataUrl, label = '', palette = null) {
     bgLayer.style.backgroundImage = `url("${dataUrl}")`;
     document.body.classList.add('has-bg');
     if (bgPreview) bgPreview.style.backgroundImage = `url("${dataUrl}")`;
     setStatus(label);
     lsSet(LS.BG, dataUrl);
 
-    // Load image into canvas for color extraction
-    // crossOrigin must be set before src to avoid tainted-canvas errors on external URLs
+    if (palette?.primary) {
+      ThemePalette.setBackground(palette.primary, palette.accent);
+      return;
+    }
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => extractColors(img);
@@ -872,213 +1219,132 @@ const Background = (() => {
     if (bgPreview) bgPreview.style.backgroundImage = '';
     setStatus('');
     lsSet(LS.BG, null);
-    resetExtractedColors();
+    ThemePalette.clearBackground();
   }
 
-  /**
-   * Samples pixels from the image using Canvas and derives a dominant
-   * accent colour, then updates CSS custom properties.
-   */
   function extractColors(imgEl) {
     try {
       const canvas = $('#color-canvas');
-      const ctx    = canvas.getContext('2d');
-      const SIZE   = 80; // sample at reduced size for performance
+      const ctx = canvas.getContext('2d');
+      const size = 80;
 
-      canvas.width  = SIZE;
-      canvas.height = SIZE;
-      ctx.drawImage(imgEl, 0, 0, SIZE, SIZE);
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(imgEl, 0, 0, size, size);
 
-      const data = ctx.getImageData(0, 0, SIZE, SIZE).data;
-      let r = 0, g = 0, b = 0, count = 0;
+      const data = ctx.getImageData(0, 0, size, size).data;
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let count = 0;
 
-      // Step of 16 = 4 channels (RGBA) × 4, meaning we sample 1 pixel out of
-      // every 4 consecutive pixels. Sufficient for colour averaging and faster
-      // than a full scan.
       for (let i = 0; i < data.length; i += 16) {
-        const pr = data[i], pg = data[i+1], pb = data[i+2], pa = data[i+3];
+        const pr = data[i];
+        const pg = data[i + 1];
+        const pb = data[i + 2];
+        const pa = data[i + 3];
         if (pa < 128) continue;
-        // Skip near-white (>230) and near-black (<25) pixels so the extracted
-        // accent reflects the image's actual chromatic content, not its
-        // highlights or shadows.
+
         const brightness = (pr + pg + pb) / 3;
         if (brightness > 230 || brightness < 25) continue;
-        r += pr; g += pg; b += pb; count++;
+
+        r += pr;
+        g += pg;
+        b += pb;
+        count++;
       }
 
       if (count === 0) return;
+
       r = Math.round(r / count);
       g = Math.round(g / count);
       b = Math.round(b / count);
 
-      // Desaturate slightly and normalise lightness for a refined, low-saturation
-      // palette that fits the minimalist aesthetic:
-      //   - saturation capped at 0.55  → avoids overly vivid accent colours
-      //   - lightness clamped [0.42, 0.65] → ensures readable contrast on both themes
-      const [h, s, l] = rgbToHsl(r, g, b);
-      const sPrime = Math.min(s, 0.55);
-      const lPrime = Math.max(0.42, Math.min(0.65, l));
-      const [pr2, pg2, pb2] = hslToRgb(h, sPrime, lPrime);
+      const [h, s, l] = ThemePalette.rgbToHsl(r, g, b);
+      const primary = ThemePalette.hslToRgb(h, Math.min(s, 0.55), ThemePalette.clamp(l, 0.42, 0.64));
+      const accent = ThemePalette.hslToRgb(
+        (h + 0.065) % 1,
+        ThemePalette.clamp(Math.min(s + 0.08, 0.72), 0.24, 0.72),
+        ThemePalette.clamp(l + 0.12, 0.48, 0.78)
+      );
 
-      const primary      = `rgb(${pr2},${pg2},${pb2})`;
-      const primaryLight = `rgb(${Math.min(255,pr2+30)},${Math.min(255,pg2+30)},${Math.min(255,pb2+30)})`;
-      const primaryDark  = `rgb(${Math.max(0,pr2-30)},${Math.max(0,pg2-30)},${Math.max(0,pb2-30)})`;
-
-      const root = document.documentElement;
-      root.style.setProperty('--primary',       primary);
-      root.style.setProperty('--primary-light', primaryLight);
-      root.style.setProperty('--primary-dark',  primaryDark);
-
-      // Update alpha variants for theme consistency
-      root.style.setProperty('--primary-alpha-06', `rgba(${pr2}, ${pg2}, ${pb2}, 0.06)`);
-      root.style.setProperty('--primary-alpha-08', `rgba(${pr2}, ${pg2}, ${pb2}, 0.08)`);
-      root.style.setProperty('--primary-alpha-10', `rgba(${pr2}, ${pg2}, ${pb2}, 0.10)`);
-      root.style.setProperty('--primary-alpha-12', `rgba(${pr2}, ${pg2}, ${pb2}, 0.12)`);
-      root.style.setProperty('--primary-alpha-15', `rgba(${pr2}, ${pg2}, ${pb2}, 0.15)`);
-      root.style.setProperty('--primary-alpha-20', `rgba(${pr2}, ${pg2}, ${pb2}, 0.20)`);
-      root.style.setProperty('--primary-alpha-25', `rgba(${pr2}, ${pg2}, ${pb2}, 0.25)`);
-      root.style.setProperty('--primary-alpha-30', `rgba(${pr2}, ${pg2}, ${pb2}, 0.30)`);
-      root.style.setProperty('--primary-alpha-40', `rgba(${pr2}, ${pg2}, ${pb2}, 0.40)`);
-      root.style.setProperty('--primary-alpha-50', `rgba(${pr2}, ${pg2}, ${pb2}, 0.50)`);
-      root.style.setProperty('--primary-alpha-60', `rgba(${pr2}, ${pg2}, ${pb2}, 0.60)`);
-    } catch (e) {
-      // Canvas tainted (cross-origin image), ignore silently
+      ThemePalette.setBackground(primary, accent);
+    } catch (err) {
+      ThemePalette.applyCurrent();
     }
-  }
-
-  function resetExtractedColors() {
-    const root = document.documentElement;
-    root.style.removeProperty('--primary');
-    root.style.removeProperty('--primary-light');
-    root.style.removeProperty('--primary-dark');
   }
 
   async function fetchAnimeBackground() {
-    setStatus('加载中…');
     const btn = $('#fetch-anime-btn');
     const origText = btn.innerHTML;
-    btn.innerHTML = '<span class="spinning">↻</span> 加载中…';
+    setStatus('Loading random wallpaper...');
+    btn.innerHTML = '<span class="spinning">鈫?/span> Loading...';
     btn.disabled = true;
 
-    // Multiple API endpoints to try in case one fails
-    const API_ENDPOINTS = [
-      { url: 'https://api.waifu.pics/sfw/waifu', type: 'waifu.pics' },
-      { url: 'https://api.waifu.im/search/?included_tags=waifu&is_nsfw=false', type: 'waifu.im' },
-      { url: 'https://nekos.best/api/v2/neko', type: 'nekos.best' },
-      { url: 'https://api.waifu.pics/sfw/neko', type: 'waifu.pics-neko' },
-      { url: 'https://nekos.best/api/v2/waifu', type: 'nekos.best-waifu' }
+    const sources = [
+      ...REMOTE_WALLPAPER_ENDPOINTS.map(url => ({ type: 'remote', url: `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` })),
+      ...CURATED_FALLBACKS.map(url => ({ type: 'fallback', url })),
     ];
 
-    let lastErr;
-    for (const endpoint of API_ENDPOINTS) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+    let lastErr = null;
 
-        const res = await fetch(endpoint.url, {
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-
-        // Extract URL based on API structure
-        let imageUrl;
-        if (endpoint.type.startsWith('waifu.pics')) {
-          imageUrl = data.url;
-        } else if (endpoint.type === 'waifu.im') {
-          imageUrl = data.images?.[0]?.url;
-        } else if (endpoint.type.startsWith('nekos.best')) {
-          imageUrl = data.results?.[0]?.url;
+    try {
+      for (const source of sources) {
+        try {
+          const dataUrl = await fetchImageAsDataUrl(source.url);
+          applyBg(dataUrl, source.type === 'fallback' ? 'Fallback wallpaper applied' : 'Random wallpaper updated');
+          setStatus(source.type === 'fallback' ? 'Primary source failed, using fallback wallpaper' : 'Wallpaper loaded');
+          return;
+        } catch (err) {
+          lastErr = err;
+          console.warn(`Failed to fetch wallpaper from ${source.url}:`, err.message || err);
         }
-
-        if (!imageUrl) throw new Error('No image URL in response');
-
-        // Fetch image as blob → data URL so Canvas sampling works (avoids taint)
-        const imgController = new AbortController();
-        const imgTimeoutId = setTimeout(() => imgController.abort(), 15000);
-
-        const imgRes = await fetch(imageUrl, {
-          signal: imgController.signal,
-          mode: 'cors'
-        });
-        clearTimeout(imgTimeoutId);
-
-        if (!imgRes.ok) throw new Error('img fetch failed');
-        const blob    = await imgRes.blob();
-        const dataUrl = await blobToDataURL(blob);
-        applyBg(dataUrl, '动漫壁纸');
-        setStatus('加载成功 ✓');
-        lastErr = null;
-        break;
-      } catch (err) {
-        lastErr = err;
-        console.warn(`Failed to fetch from ${endpoint.type}:`, err.message || err);
-        // Continue to next API
       }
-    }
 
-    if (lastErr) {
-      setStatus('加载失败，请稍后重试或上传本地图片');
-      console.error('All background APIs failed:', lastErr);
+      setStatus('Wallpaper unavailable right now. Try again or upload a local image.');
+      console.error('All background sources failed:', lastErr);
+    } finally {
+      btn.innerHTML = origText;
+      btn.disabled = false;
     }
-    btn.innerHTML = origText;
-    btn.disabled = false;
   }
 
   function blobToDataURL(blob) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload  = () => resolve(reader.result);
+      reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
   }
 
+  async function fetchImageAsDataUrl(url) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 18000);
+    try {
+      const res = await fetch(url, {
+        signal: controller.signal,
+        mode: 'cors',
+        cache: 'no-store',
+      });
+      if (!res.ok) throw new Error(`Image HTTP ${res.status}`);
+      const blob = await res.blob();
+      return await blobToDataURL(blob);
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
   function handleUpload(file) {
     if (!file || !file.type.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onload = e => applyBg(e.target.result, file.name);
+    reader.onload = e => applyBg(e.target.result, file.name || 'Local image');
     reader.readAsDataURL(file);
   }
 
-  function init() {
-    // Restore saved background
-    const saved = lsGet(LS.BG, null);
-    if (saved) applyBg(saved, '已保存');
-
-    // Restore saved background options
-    const savedOptions = lsGet(LS.BG_OPTIONS, {
-      displayMode: 'cover',
-      size: 100,
-      positionX: 50,
-      positionY: 50,
-      blur: 1,
-      opacity: 1,
-      saturation: 1
-    });
-    applyBgOptions(savedOptions);
-
-    $('#fetch-anime-btn').addEventListener('click', fetchAnimeBackground);
-
-    $('#bg-upload').addEventListener('change', e => {
-      const file = e.target.files?.[0];
-      if (file) handleUpload(file);
-      e.target.value = '';
-    });
-
-    $('#clear-bg-btn').addEventListener('click', clearBg);
-
-    // Initialize background controls
-    initBgControls(savedOptions);
-  }
-
   function applyBgOptions(options) {
-    const bgLayer = $('#bg-layer');
-    const bgOverlay = $('#bg-overlay');
+    const overlay = $('#bg-overlay');
 
-    // Display mode
     if (options.displayMode === 'custom') {
       bgLayer.style.backgroundSize = `${options.size}%`;
       bgLayer.style.backgroundPosition = `${options.positionX}% ${options.positionY}%`;
@@ -1087,13 +1353,8 @@ const Background = (() => {
       bgLayer.style.backgroundPosition = 'center';
     }
 
-    // Blur effect (applied to overlay)
-    bgOverlay.style.backdropFilter = `blur(${options.blur}px)`;
-
-    // Opacity
+    overlay.style.backdropFilter = `blur(${options.blur}px) saturate(${1 + options.saturation * 0.2})`;
     bgLayer.style.opacity = options.opacity;
-
-    // Saturation
     bgLayer.style.filter = `saturate(${options.saturation})`;
   }
 
@@ -1110,7 +1371,6 @@ const Background = (() => {
     const bgSaturation = $('#bg-saturation');
     const bgSaturationValue = $('#bg-saturation-value');
 
-    // Set initial values
     displayMode.value = savedOptions.displayMode;
     bgSize.value = savedOptions.size;
     bgPosX.value = savedOptions.positionX;
@@ -1121,27 +1381,17 @@ const Background = (() => {
     bgOpacityValue.textContent = `${Math.round(savedOptions.opacity * 100)}%`;
     bgSaturation.value = savedOptions.saturation;
     bgSaturationValue.textContent = `${Math.round(savedOptions.saturation * 100)}%`;
+    customOptions.classList.toggle('hidden', savedOptions.displayMode !== 'custom');
 
-    // Show/hide custom options
-    if (savedOptions.displayMode === 'custom') {
-      customOptions.classList.remove('hidden');
-    }
-
-    // Display mode change
-    displayMode.addEventListener('change', (e) => {
+    displayMode.addEventListener('change', e => {
       savedOptions.displayMode = e.target.value;
-      if (e.target.value === 'custom') {
-        customOptions.classList.remove('hidden');
-      } else {
-        customOptions.classList.add('hidden');
-      }
+      customOptions.classList.toggle('hidden', e.target.value !== 'custom');
       applyBgOptions(savedOptions);
       lsSet(LS.BG_OPTIONS, savedOptions);
     });
 
-    // Custom size/position
     [bgSize, bgPosX, bgPosY].forEach(input => {
-      input.addEventListener('input', (e) => {
+      input.addEventListener('input', e => {
         if (input === bgSize) savedOptions.size = parseFloat(e.target.value);
         if (input === bgPosX) savedOptions.positionX = parseFloat(e.target.value);
         if (input === bgPosY) savedOptions.positionY = parseFloat(e.target.value);
@@ -1150,24 +1400,21 @@ const Background = (() => {
       });
     });
 
-    // Blur slider
-    bgBlur.addEventListener('input', (e) => {
+    bgBlur.addEventListener('input', e => {
       savedOptions.blur = parseFloat(e.target.value);
       bgBlurValue.textContent = `${savedOptions.blur}px`;
       applyBgOptions(savedOptions);
       lsSet(LS.BG_OPTIONS, savedOptions);
     });
 
-    // Opacity slider
-    bgOpacity.addEventListener('input', (e) => {
+    bgOpacity.addEventListener('input', e => {
       savedOptions.opacity = parseFloat(e.target.value);
       bgOpacityValue.textContent = `${Math.round(savedOptions.opacity * 100)}%`;
       applyBgOptions(savedOptions);
       lsSet(LS.BG_OPTIONS, savedOptions);
     });
 
-    // Saturation slider
-    bgSaturation.addEventListener('input', (e) => {
+    bgSaturation.addEventListener('input', e => {
       savedOptions.saturation = parseFloat(e.target.value);
       bgSaturationValue.textContent = `${Math.round(savedOptions.saturation * 100)}%`;
       applyBgOptions(savedOptions);
@@ -1175,46 +1422,30 @@ const Background = (() => {
     });
   }
 
-  // ── Color math helpers ──
+  function init() {
+    const savedTheme = lsGet(LS.BG_THEME, null);
+    const saved = lsGet(LS.BG, null);
+    if (saved) applyBg(saved, 'Saved wallpaper restored', savedTheme);
 
-  function rgbToHsl(r, g, b) {
-    r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-    if (max === min) {
-      h = s = 0;
-    } else {
-      const d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-        case g: h = ((b - r) / d + 2) / 6; break;
-        case b: h = ((r - g) / d + 4) / 6; break;
-      }
-    }
-    return [h, s, l];
-  }
+    const savedOptions = lsGet(LS.BG_OPTIONS, {
+      displayMode: 'cover',
+      size: 100,
+      positionX: 50,
+      positionY: 50,
+      blur: 1,
+      opacity: 1,
+      saturation: 1,
+    });
+    applyBgOptions(savedOptions);
 
-  function hslToRgb(h, s, l) {
-    let r, g, b;
-    if (s === 0) {
-      r = g = b = l;
-    } else {
-      const hue2rgb = (p, q, t) => {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1/6) return p + (q - p) * 6 * t;
-        if (t < 1/2) return q;
-        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-      };
-      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      const p = 2 * l - q;
-      r = hue2rgb(p, q, h + 1/3);
-      g = hue2rgb(p, q, h);
-      b = hue2rgb(p, q, h - 1/3);
-    }
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    $('#fetch-anime-btn').addEventListener('click', fetchAnimeBackground);
+    $('#bg-upload').addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (file) handleUpload(file);
+      e.target.value = '';
+    });
+    $('#clear-bg-btn').addEventListener('click', clearBg);
+    initBgControls(savedOptions);
   }
 
   return { init };
@@ -1244,58 +1475,26 @@ const SettingsPanel = (() => {
       if (e.key === 'Escape') close();
     });
 
-    // Initialize preset themes
     initPresetThemes();
-
-    // Initialize color pickers
     initColorPickers();
-
-    // Initialize cursor effects toggle
     initCursorEffectsToggle();
-
-    // Initialize widget visibility toggles
     initWidgetToggles();
   }
 
   function initPresetThemes() {
-    const presetBtns = $$('.theme-preset');
+    const presetBtns = $('.theme-preset');
     const primaryPicker = $('#primary-color-picker');
     const accentPicker = $('#accent-color-picker');
 
-    // Mark active preset based on current colors
-    function updateActivePreset() {
-      const currentPrimary = primaryPicker.value.toLowerCase();
-      const currentAccent = accentPicker.value.toLowerCase();
-
-      presetBtns.forEach(btn => {
-        const presetPrimary = btn.dataset.primary.toLowerCase();
-        const presetAccent = btn.dataset.accent.toLowerCase();
-
-        if (presetPrimary === currentPrimary && presetAccent === currentAccent) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-    }
-
-    // Apply preset theme when clicked
     presetBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const primary = btn.dataset.primary;
         const accent = btn.dataset.accent;
-
         primaryPicker.value = primary;
         accentPicker.value = accent;
-
         applyCustomColors(primary, accent);
-        lsSet(LS.CUSTOM_COLORS, { primary, accent });
-        updateActivePreset();
       });
     });
-
-    // Update active state on load
-    updateActivePreset();
   }
 
   function initColorPickers() {
@@ -1303,84 +1502,30 @@ const SettingsPanel = (() => {
     const accentPicker = $('#accent-color-picker');
     const resetBtn = $('#reset-colors-btn');
 
-    // Load saved colors
-    const savedColors = lsGet(LS.CUSTOM_COLORS, null);
-    if (savedColors) {
-      primaryPicker.value = savedColors.primary;
-      accentPicker.value = savedColors.accent;
-      applyCustomColors(savedColors.primary, savedColors.accent);
-    }
-
-    // Primary color change
-    primaryPicker.addEventListener('input', (e) => {
-      const primary = e.target.value;
-      const accent = accentPicker.value;
-      applyCustomColors(primary, accent);
-      lsSet(LS.CUSTOM_COLORS, { primary, accent });
+    primaryPicker.addEventListener('input', e => {
+      applyCustomColors(e.target.value, accentPicker.value);
     });
 
-    // Accent color change
-    accentPicker.addEventListener('input', (e) => {
-      const primary = primaryPicker.value;
-      const accent = e.target.value;
-      applyCustomColors(primary, accent);
-      lsSet(LS.CUSTOM_COLORS, { primary, accent });
+    accentPicker.addEventListener('input', e => {
+      applyCustomColors(primaryPicker.value, e.target.value);
     });
 
-    // Reset colors
     resetBtn.addEventListener('click', () => {
-      primaryPicker.value = '#8b7fd4';
-      accentPicker.value = '#c9a0dc';
-      applyCustomColors('#8b7fd4', '#c9a0dc');
-      lsSet(LS.CUSTOM_COLORS, null);
+      ThemePalette.clearManual();
     });
   }
 
   function applyCustomColors(primary, accent) {
-    const root = document.documentElement;
-
-    // Convert hex to RGB for manipulation
-    const hexToRgb = (hex) => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
-    };
-
-    const rgb = hexToRgb(primary);
-    if (rgb) {
-      root.style.setProperty('--primary', primary);
-      root.style.setProperty('--primary-light',
-        `rgb(${Math.min(255, rgb.r + 30)}, ${Math.min(255, rgb.g + 30)}, ${Math.min(255, rgb.b + 30)})`);
-      root.style.setProperty('--primary-dark',
-        `rgb(${Math.max(0, rgb.r - 30)}, ${Math.max(0, rgb.g - 30)}, ${Math.max(0, rgb.b - 30)})`);
-
-      // Update alpha variants for theme consistency
-      root.style.setProperty('--primary-alpha-06', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`);
-      root.style.setProperty('--primary-alpha-08', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`);
-      root.style.setProperty('--primary-alpha-10', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10)`);
-      root.style.setProperty('--primary-alpha-12', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`);
-      root.style.setProperty('--primary-alpha-15', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`);
-      root.style.setProperty('--primary-alpha-20', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.20)`);
-      root.style.setProperty('--primary-alpha-25', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`);
-      root.style.setProperty('--primary-alpha-30', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.30)`);
-      root.style.setProperty('--primary-alpha-40', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.40)`);
-      root.style.setProperty('--primary-alpha-50', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.50)`);
-      root.style.setProperty('--primary-alpha-60', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.60)`);
-    }
-
-    root.style.setProperty('--accent', accent);
+    ThemePalette.setManual(primary, accent);
   }
 
   function initCursorEffectsToggle() {
     const toggle = $('#cursor-effects-toggle');
-    const isEnabled = lsGet(LS.CURSOR_EFFECTS, true);
+    const isEnabled = lsGet(LS.CURSOR_EFFECTS, true) && window.matchMedia('(pointer: fine)').matches;
     toggle.checked = isEnabled;
 
-    toggle.addEventListener('change', (e) => {
-      CursorEffects.toggle();
+    toggle.addEventListener('change', e => {
+      toggle.checked = CursorEffects.toggle(e.target.checked);
     });
   }
 
@@ -1390,31 +1535,21 @@ const SettingsPanel = (() => {
       clock: true,
       weather: true,
       todo: true,
-      notes: true
+      notes: true,
     });
 
     widgetTypes.forEach(type => {
       const toggle = $(`#widget-${type}-toggle`);
       const widget = $(`#${type}-widget-compact`);
-
       if (!toggle || !widget) return;
 
-      // Set initial state
       toggle.checked = savedVisibility[type];
-      if (!savedVisibility[type]) {
-        widget.classList.add('hidden');
-      }
+      widget.classList.toggle('hidden', !savedVisibility[type]);
 
-      // Handle toggle changes
-      toggle.addEventListener('change', (e) => {
+      toggle.addEventListener('change', e => {
         savedVisibility[type] = e.target.checked;
         lsSet(LS.WIDGET_VISIBILITY, savedVisibility);
-
-        if (e.target.checked) {
-          widget.classList.remove('hidden');
-        } else {
-          widget.classList.add('hidden');
-        }
+        widget.classList.toggle('hidden', !e.target.checked);
       });
     });
   }
@@ -1519,31 +1654,60 @@ const NotesModal = (() => {
 const CursorEffects = (() => {
   let cursorDot = null;
   let isEnabled = true;
+  let listenersBound = false;
 
-  function init() {
-    // Check if user has enabled cursor effects
-    isEnabled = lsGet('hp_cursor_effects', true);
-    if (!isEnabled) return;
+  function supportsFinePointer() {
+    return window.matchMedia('(pointer: fine)').matches;
+  }
 
-    // Create cursor dot
+  function ensureCursorDot() {
+    if (cursorDot) return;
     cursorDot = el('div', 'cursor-dot');
     document.body.appendChild(cursorDot);
+  }
 
-    // Track mouse movement
-    document.addEventListener('mousemove', (e) => {
-      if (!cursorDot) return;
-      cursorDot.style.left = e.clientX - 8 + 'px';
-      cursorDot.style.top = e.clientY - 8 + 'px';
-      if (!cursorDot.classList.contains('active')) {
-        cursorDot.classList.add('active');
+  function handleMouseMove(e) {
+    if (!cursorDot || !isEnabled) return;
+    cursorDot.style.left = e.clientX - 8 + 'px';
+    cursorDot.style.top = e.clientY - 8 + 'px';
+    cursorDot.classList.add('active');
+  }
+
+  function handleMouseLeave() {
+    if (cursorDot) cursorDot.classList.remove('active');
+  }
+
+  function handleClick(e) {
+    if (!isEnabled) return;
+    createClickParticles(e.clientX, e.clientY);
+  }
+
+  function bindListeners() {
+    if (listenersBound) return;
+    listenersBound = true;
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('click', handleClick);
+  }
+
+  function syncState() {
+    document.body.classList.toggle('cursor-effects-enabled', isEnabled);
+
+    if (!isEnabled) {
+      if (cursorDot) {
+        cursorDot.remove();
+        cursorDot = null;
       }
-    });
+      return;
+    }
 
-    // Add click particle effect
-    document.addEventListener('click', (e) => {
-      if (!isEnabled) return;
-      createClickParticles(e.clientX, e.clientY);
-    });
+    ensureCursorDot();
+  }
+
+  function init() {
+    bindListeners();
+    isEnabled = lsGet(LS.CURSOR_EFFECTS, true) && supportsFinePointer();
+    syncState();
   }
 
   function createClickParticles(x, y) {
@@ -1562,25 +1726,15 @@ const CursorEffects = (() => {
 
       particle.style.setProperty('--tx', tx + 'px');
       particle.style.setProperty('--ty', ty + 'px');
-
       document.body.appendChild(particle);
-
-      // Remove particle after animation
       setTimeout(() => particle.remove(), 800);
     }
   }
 
-  function toggle() {
-    isEnabled = !isEnabled;
-    lsSet('hp_cursor_effects', isEnabled);
-    if (isEnabled) {
-      init();
-    } else {
-      if (cursorDot) {
-        cursorDot.remove();
-        cursorDot = null;
-      }
-    }
+  function toggle(nextState) {
+    isEnabled = typeof nextState === 'boolean' ? nextState && supportsFinePointer() : !isEnabled;
+    lsSet(LS.CURSOR_EFFECTS, isEnabled);
+    syncState();
     return isEnabled;
   }
 
@@ -1589,6 +1743,7 @@ const CursorEffects = (() => {
 
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
+  ThemePalette.init();
   Clock.init();
   Weather.init();
   Search.init();

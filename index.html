@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HomePage · 个人导航</title>
+  <title>HomePage - Personal Start Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -11,15 +11,13 @@
 </head>
 <body>
 
-<!-- Background layer -->
 <div id="bg-layer" class="bg-layer"></div>
 <div id="bg-overlay" class="bg-overlay"></div>
 
-<!-- ── Top Toolbar ── -->
 <header class="toolbar" id="toolbar">
   <div class="toolbar-left">
     <div class="logo">
-      <span class="logo-icon">✦</span>
+      <span class="logo-icon">*</span>
       <span class="logo-text">HomePage</span>
     </div>
   </div>
@@ -27,28 +25,27 @@
   <div class="toolbar-center">
     <form class="search-form" id="search-form">
       <div class="search-wrap">
-        <button type="button" class="engine-btn" id="engine-btn" title="切换搜索引擎">
+        <button type="button" class="engine-btn" id="engine-btn" title="Switch search engine">
           <span id="engine-icon">G</span>
         </button>
         <input
           type="text"
           class="search-input"
           id="search-input"
-          placeholder="搜索 · Search…"
+          placeholder="Search"
           autocomplete="off"
           spellcheck="false"
         />
-        <button type="submit" class="search-submit" title="搜索">
+        <button type="submit" class="search-submit" title="Search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         </button>
       </div>
-      <!-- Engine dropdown -->
       <div class="engine-dropdown" id="engine-dropdown">
         <button type="button" class="engine-option active" data-engine="google" data-icon="G" data-url="https://www.google.com/search?q=">
           <span class="engine-logo google">G</span> Google
         </button>
-        <button type="button" class="engine-option" data-engine="baidu" data-icon="百" data-url="https://www.baidu.com/s?wd=">
-          <span class="engine-logo baidu">百</span> Baidu 百度
+        <button type="button" class="engine-option" data-engine="baidu" data-icon="B" data-url="https://www.baidu.com/s?wd=">
+          <span class="engine-logo baidu">B</span> Baidu
         </button>
         <button type="button" class="engine-option" data-engine="bing" data-icon="B" data-url="https://www.bing.com/search?q=">
           <span class="engine-logo bing">B</span> Bing
@@ -61,137 +58,123 @@
   </div>
 
   <div class="toolbar-right">
-    <button class="icon-btn" id="theme-toggle" title="切换主题">
+    <button class="icon-btn" id="theme-toggle" title="Toggle theme">
       <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
-    <button class="icon-btn" id="settings-btn" title="设置">
+    <button class="icon-btn" id="settings-btn" title="Settings">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
 </header>
 
-<!-- ── Widgets Bar ── -->
 <div class="widgets-bar" id="widgets-bar">
-  <!-- Clock Widget -->
   <div class="widget-compact clock-widget" id="clock-widget-compact" data-widget="clock">
     <div class="widget-compact-content">
-      <span class="widget-compact-icon">🕐</span>
+      <span class="widget-compact-icon">TIME</span>
       <div class="widget-compact-info">
         <div class="clock-time-compact" id="clock-time">00:00:00</div>
-        <div class="clock-date-compact" id="clock-date">加载中…</div>
+        <div class="clock-date-compact" id="clock-date">Loading...</div>
       </div>
     </div>
   </div>
 
-  <!-- Weather Widget -->
   <div class="widget-compact weather-widget" id="weather-widget-compact" data-widget="weather">
     <div class="weather-loading" id="weather-loading">
       <div class="shimmer-line"></div>
       <div class="shimmer-line short"></div>
     </div>
     <div class="weather-content hidden widget-compact-content" id="weather-content">
-      <span class="weather-icon widget-compact-icon" id="weather-icon">🌤</span>
+      <span class="weather-icon widget-compact-icon" id="weather-icon">WX</span>
       <div class="widget-compact-info">
         <div class="weather-main-compact">
           <span class="weather-temp" id="weather-temp">--°C</span>
           <span class="weather-feels" id="weather-feels"></span>
-          <span class="weather-desc-compact" id="weather-desc">获取天气中…</span>
+          <span class="weather-desc-compact" id="weather-desc">Loading weather...</span>
         </div>
         <div class="weather-meta-compact">
-          <span id="weather-humidity">💧 --%</span>
-          <span id="weather-wind">🌬 --km/h</span>
+          <span id="weather-humidity">H --%</span>
+          <span id="weather-wind">W --km/h</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Todo Widget -->
-  <div class="widget-compact todo-widget clickable" id="todo-widget-compact" data-widget="todo" title="点击打开待办事项">
+  <div class="widget-compact todo-widget clickable" id="todo-widget-compact" data-widget="todo" title="Open todo">
     <div class="widget-compact-content">
-      <span class="widget-compact-icon">✓</span>
+      <span class="widget-compact-icon">TODO</span>
       <div class="widget-compact-info">
-        <div class="todo-summary">待办事项</div>
-        <div class="todo-count" id="todo-count-compact">0 项</div>
+        <div class="todo-summary">Todo</div>
+        <div class="todo-count" id="todo-count-compact">0 items</div>
       </div>
     </div>
   </div>
 
-  <!-- Notes Widget -->
-  <div class="widget-compact notes-widget clickable" id="notes-widget-compact" data-widget="notes" title="点击打开笔记">
+  <div class="widget-compact notes-widget clickable" id="notes-widget-compact" data-widget="notes" title="Open notes">
     <div class="widget-compact-content">
-      <span class="widget-compact-icon">📝</span>
+      <span class="widget-compact-icon">NOTE</span>
       <div class="widget-compact-info">
-        <div class="notes-summary">笔记</div>
-        <div class="notes-preview" id="notes-preview-compact">无内容</div>
+        <div class="notes-summary">Notes</div>
+        <div class="notes-preview" id="notes-preview-compact">No content</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── Main Layout ── -->
 <main class="main-layout">
-
-  <!-- Content Area (now full width) -->
   <section class="content-area">
+    <div id="shortcuts-section"></div>
 
-    <!-- Shortcuts -->
-    <div id="shortcuts-section">
-      <!-- Groups rendered by JS -->
-    </div>
-
-    <!-- Recently Visited -->
     <div class="content-block" id="recent-block">
       <div class="block-header">
-        <h2 class="block-title">最近访问</h2>
-        <button type="button" class="text-btn" id="clear-recent-btn">清除</button>
+        <h2 class="block-title">Recent</h2>
+        <button type="button" class="text-btn" id="clear-recent-btn">Clear</button>
       </div>
       <div class="recent-list" id="recent-list">
-        <p class="empty-hint">暂无访问记录</p>
+        <p class="empty-hint">No recent items</p>
       </div>
     </div>
 
-    <!-- Bookmarks -->
     <div class="content-block" id="bookmarks-block">
       <div class="block-header">
-        <h2 class="block-title">我的收藏</h2>
-        <button type="button" class="text-btn" id="add-bookmark-btn">+ 添加</button>
+        <h2 class="block-title">Bookmarks</h2>
+        <button type="button" class="text-btn" id="add-bookmark-btn">+ Add</button>
       </div>
       <div class="bookmarks-grid" id="bookmarks-grid">
-        <p class="empty-hint">暂无收藏，点击"+ 添加"</p>
+        <p class="empty-hint">No bookmarks yet</p>
       </div>
     </div>
-
   </section>
 </main>
 
-<!-- ── Settings Panel ── -->
 <div class="settings-overlay" id="settings-overlay"></div>
 <aside class="settings-panel" id="settings-panel">
   <div class="settings-header">
-    <h2>设置 · Settings</h2>
+    <div class="settings-header-content">
+      <h2>Settings</h2>
+      <p class="settings-subtitle">Theme, wallpaper, layout, widgets, and shortcut controls.</p>
+    </div>
     <button type="button" class="icon-btn" id="settings-close">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
 
   <div class="settings-body">
-    <!-- Background Section -->
-    <div class="settings-section">
-      <h3 class="settings-section-title">背景 Background</h3>
+    <div class="settings-section settings-section-wide">
+      <h3 class="settings-section-title">Wallpaper</h3>
       <div class="settings-row">
         <button type="button" class="settings-action-btn" id="fetch-anime-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-          随机动漫壁纸
+          Random wallpaper
         </button>
         <label class="settings-action-btn" for="bg-upload">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-          上传图片
+          Upload image
           <input type="file" id="bg-upload" accept="image/*" style="display:none" />
         </label>
         <button type="button" class="settings-action-btn" id="clear-bg-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-          清除背景
+          Clear wallpaper
         </button>
       </div>
       <div class="bg-preview-wrap">
@@ -199,162 +182,158 @@
         <span id="bg-status" class="bg-status"></span>
       </div>
 
-      <!-- Background Display Options -->
       <div class="bg-options">
         <label class="bg-option-label">
-          <span>显示方式 Display Mode</span>
+          <span>Display mode</span>
           <select id="bg-display-mode" class="bg-select">
-            <option value="cover">覆盖 Cover</option>
-            <option value="contain">适应 Contain</option>
-            <option value="fill">填充 Fill</option>
-            <option value="custom">自定义 Custom</option>
+            <option value="cover">Cover</option>
+            <option value="contain">Contain</option>
+            <option value="fill">Fill</option>
+            <option value="custom">Custom</option>
           </select>
         </label>
 
         <div id="bg-custom-options" class="bg-custom-options hidden">
           <label class="bg-option-label">
-            <span>大小 Size (%)</span>
+            <span>Size (%)</span>
             <input type="number" id="bg-size" class="bg-input" value="100" min="10" max="200" />
           </label>
           <label class="bg-option-label">
-            <span>水平偏移 X (%)</span>
+            <span>Offset X (%)</span>
             <input type="number" id="bg-position-x" class="bg-input" value="50" min="0" max="100" />
           </label>
           <label class="bg-option-label">
-            <span>垂直偏移 Y (%)</span>
+            <span>Offset Y (%)</span>
             <input type="number" id="bg-position-y" class="bg-input" value="50" min="0" max="100" />
           </label>
         </div>
 
         <label class="bg-option-label">
-          <span>模糊强度 Blur (px)</span>
+          <span>Blur (px)</span>
           <input type="range" id="bg-blur" class="bg-slider" min="0" max="20" value="1" step="0.5" />
           <span class="bg-value" id="bg-blur-value">1px</span>
         </label>
 
         <label class="bg-option-label">
-          <span>不透明度 Opacity</span>
+          <span>Opacity</span>
           <input type="range" id="bg-opacity" class="bg-slider" min="0.1" max="1" value="1" step="0.1" />
           <span class="bg-value" id="bg-opacity-value">100%</span>
         </label>
 
         <label class="bg-option-label">
-          <span>饱和度 Saturation</span>
+          <span>Saturation</span>
           <input type="range" id="bg-saturation" class="bg-slider" min="0" max="2" value="1" step="0.1" />
           <span class="bg-value" id="bg-saturation-value">100%</span>
         </label>
       </div>
     </div>
 
-    <!-- Theme Colors Section -->
     <div class="settings-section">
-      <h3 class="settings-section-title">主题色 Theme Colors</h3>
+      <h3 class="settings-section-title">Theme Colors</h3>
+      <div class="theme-sync-status">
+        <span class="theme-source-label">Theme source</span>
+        <strong class="theme-source-value" id="theme-source-value">Default</strong>
+      </div>
 
-      <!-- Preset Theme Palettes -->
       <div class="preset-themes">
-        <button type="button" class="theme-preset" data-primary="#8b7fd4" data-accent="#c9a0dc" title="薰衣草紫 Lavender Purple">
+        <button type="button" class="theme-preset" data-primary="#8b7fd4" data-accent="#c9a0dc" title="Lavender">
           <span class="preset-dot" style="background: #8b7fd4;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#ff6b9d" data-accent="#ff8fab" title="樱花粉 Cherry Blossom">
+        <button type="button" class="theme-preset" data-primary="#ff6b9d" data-accent="#ff8fab" title="Rose">
           <span class="preset-dot" style="background: #ff6b9d;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#4FC3F7" data-accent="#81D4FA" title="天空蓝 Sky Blue">
+        <button type="button" class="theme-preset" data-primary="#4FC3F7" data-accent="#81D4FA" title="Sky">
           <span class="preset-dot" style="background: #4FC3F7;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#66BB6A" data-accent="#81C784" title="清新绿 Fresh Green">
+        <button type="button" class="theme-preset" data-primary="#66BB6A" data-accent="#81C784" title="Green">
           <span class="preset-dot" style="background: #66BB6A;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#FFB74D" data-accent="#FFCC80" title="温暖橙 Warm Orange">
+        <button type="button" class="theme-preset" data-primary="#FFB74D" data-accent="#FFCC80" title="Amber">
           <span class="preset-dot" style="background: #FFB74D;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#BA68C8" data-accent="#CE93D8" title="梦幻紫 Dream Purple">
+        <button type="button" class="theme-preset" data-primary="#BA68C8" data-accent="#CE93D8" title="Violet">
           <span class="preset-dot" style="background: #BA68C8;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#EF5350" data-accent="#E57373" title="热情红 Passion Red">
+        <button type="button" class="theme-preset" data-primary="#EF5350" data-accent="#E57373" title="Red">
           <span class="preset-dot" style="background: #EF5350;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#26A69A" data-accent="#4DB6AC" title="青绿色 Teal">
+        <button type="button" class="theme-preset" data-primary="#26A69A" data-accent="#4DB6AC" title="Teal">
           <span class="preset-dot" style="background: #26A69A;"></span>
         </button>
       </div>
 
       <div class="color-picker-wrap">
         <label class="color-picker-label">
-          <span>主色调 Primary</span>
+          <span>Primary</span>
           <input type="color" id="primary-color-picker" value="#8b7fd4" />
         </label>
         <label class="color-picker-label">
-          <span>强调色 Accent</span>
+          <span>Accent</span>
           <input type="color" id="accent-color-picker" value="#c9a0dc" />
         </label>
       </div>
       <div class="settings-row">
         <button type="button" class="settings-action-btn" id="reset-colors-btn">
-          重置默认颜色
+          Reset colors
         </button>
       </div>
     </div>
 
-    <!-- Effects Section -->
     <div class="settings-section">
-      <h3 class="settings-section-title">特效 Effects</h3>
+      <h3 class="settings-section-title">Effects</h3>
       <div class="settings-toggle-row">
         <label class="toggle-label">
-          <span>鼠标特效 Cursor Effects</span>
+          <span>Cursor effects</span>
           <input type="checkbox" id="cursor-effects-toggle" checked />
         </label>
       </div>
     </div>
 
-    <!-- Widget Visibility Section -->
     <div class="settings-section">
-      <h3 class="settings-section-title">小组件显示 Widget Visibility</h3>
+      <h3 class="settings-section-title">Widgets</h3>
       <div class="settings-toggle-row">
         <label class="toggle-label">
-          <span>🕐 时钟 Clock</span>
+          <span>Clock</span>
           <input type="checkbox" id="widget-clock-toggle" checked />
         </label>
         <label class="toggle-label">
-          <span>🌤 天气 Weather</span>
+          <span>Weather</span>
           <input type="checkbox" id="widget-weather-toggle" checked />
         </label>
         <label class="toggle-label">
-          <span>✓ 待办事项 Todo</span>
+          <span>Todo</span>
           <input type="checkbox" id="widget-todo-toggle" checked />
         </label>
         <label class="toggle-label">
-          <span>📝 笔记 Notes</span>
+          <span>Notes</span>
           <input type="checkbox" id="widget-notes-toggle" checked />
         </label>
       </div>
     </div>
 
-    <!-- Shortcut Section -->
-    <div class="settings-section">
-      <h3 class="settings-section-title">快捷方式 Shortcuts</h3>
+    <div class="settings-section settings-section-wide">
+      <h3 class="settings-section-title">Shortcuts</h3>
       <div class="settings-row">
         <button type="button" class="settings-action-btn primary" id="add-shortcut-btn">
-          + 添加快捷方式
+          + Add shortcut
         </button>
       </div>
-      <p class="settings-hint">💡 提示：快捷方式可以拖拽排序</p>
+      <p class="settings-hint">Tip: drag cards to reorder shortcuts.</p>
       <div id="shortcut-manager-list" class="shortcut-manager-list"></div>
     </div>
 
-    <!-- About -->
     <div class="settings-section">
-      <h3 class="settings-section-title">关于 About</h3>
-      <p class="settings-about-text">个人导航主页 · 用纯粹的代码打造你的数字工作台</p>
-      <p class="settings-about-text" style="margin-top:4px;opacity:.6;font-size:.75rem;">Data stored locally · No tracking</p>
+      <h3 class="settings-section-title">About</h3>
+      <p class="settings-about-text">A lightweight personal dashboard for daily links and tools.</p>
+      <p class="settings-about-text" style="margin-top:4px;opacity:.6;font-size:.75rem;">Data is stored locally. No tracking.</p>
     </div>
   </div>
 </aside>
 
-<!-- ── Shortcut Modal ── -->
 <div class="modal-overlay" id="shortcut-modal-overlay">
   <div class="modal" id="shortcut-modal">
     <div class="modal-header">
-      <h3 id="shortcut-modal-title">添加快捷方式</h3>
+      <h3 id="shortcut-modal-title">Add shortcut</h3>
       <button type="button" class="icon-btn" id="shortcut-modal-close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -362,101 +341,97 @@
     <form id="shortcut-form" class="modal-form">
       <input type="hidden" id="shortcut-edit-id" />
       <div class="form-group">
-        <label>名称 Name</label>
+        <label>Name</label>
         <input type="text" id="shortcut-name" placeholder="e.g. GitHub" required maxlength="30" />
       </div>
       <div class="form-group">
-        <label>链接 URL</label>
+        <label>URL</label>
         <input type="url" id="shortcut-url" placeholder="https://" required />
       </div>
       <div class="form-group">
-        <label>图标 Emoji / Icon</label>
-        <input type="text" id="shortcut-icon" placeholder="🔗  或输入单个 emoji" maxlength="4" />
+        <label>Icon</label>
+        <input type="text" id="shortcut-icon" placeholder="e.g. GH" maxlength="4" />
       </div>
       <div class="form-group">
-        <label>分组 Group</label>
-        <input type="text" id="shortcut-group" placeholder="e.g. 常用" required maxlength="20" />
+        <label>Group</label>
+        <input type="text" id="shortcut-group" placeholder="e.g. Work" required maxlength="20" />
       </div>
       <div class="form-group">
-        <label>描述 Description (可选)</label>
-        <input type="text" id="shortcut-desc" placeholder="简短描述" maxlength="50" />
+        <label>Description</label>
+        <input type="text" id="shortcut-desc" placeholder="Short note" maxlength="50" />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="shortcut-cancel-btn">取消</button>
-        <button type="submit" class="btn-primary">保存</button>
+        <button type="button" class="btn-secondary" id="shortcut-cancel-btn">Cancel</button>
+        <button type="submit" class="btn-primary">Save</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- ── Bookmark Modal ── -->
 <div class="modal-overlay" id="bookmark-modal-overlay">
   <div class="modal" id="bookmark-modal">
     <div class="modal-header">
-      <h3>添加收藏</h3>
+      <h3>Add bookmark</h3>
       <button type="button" class="icon-btn" id="bookmark-modal-close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <form id="bookmark-form" class="modal-form">
       <div class="form-group">
-        <label>名称 Name</label>
-        <input type="text" id="bookmark-name" placeholder="e.g. My Blog" required maxlength="40" />
+        <label>Name</label>
+        <input type="text" id="bookmark-name" placeholder="e.g. Blog" required maxlength="40" />
       </div>
       <div class="form-group">
-        <label>链接 URL</label>
+        <label>URL</label>
         <input type="url" id="bookmark-url" placeholder="https://" required />
       </div>
       <div class="form-group">
-        <label>图标 Emoji</label>
-        <input type="text" id="bookmark-icon" placeholder="🔖" maxlength="4" />
+        <label>Icon</label>
+        <input type="text" id="bookmark-icon" placeholder="BM" maxlength="4" />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="bookmark-cancel-btn">取消</button>
-        <button type="submit" class="btn-primary">保存</button>
+        <button type="button" class="btn-secondary" id="bookmark-cancel-btn">Cancel</button>
+        <button type="submit" class="btn-primary">Save</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- ── Todo Modal ── -->
 <div class="modal-overlay" id="todo-modal-overlay">
   <div class="modal widget-modal" id="todo-modal">
     <div class="modal-header">
-      <h3>✓ 待办事项 Todo</h3>
+      <h3>Todo</h3>
       <button type="button" class="icon-btn" id="todo-modal-close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
       <div class="todo-input-wrap">
-        <input type="text" id="todo-input" placeholder="添加新的待办事项…" />
-        <button type="button" class="add-btn" id="todo-add-btn" title="添加">+</button>
+        <input type="text" id="todo-input" placeholder="Add a task..." />
+        <button type="button" class="add-btn" id="todo-add-btn" title="Add">+</button>
       </div>
       <ul class="todo-list" id="todo-list">
-        <li class="todo-empty-hint">暂无待办，开始添加吧！</li>
+        <li class="todo-empty-hint">No tasks yet.</li>
       </ul>
     </div>
   </div>
 </div>
 
-<!-- ── Notes Modal ── -->
 <div class="modal-overlay" id="notes-modal-overlay">
   <div class="modal widget-modal" id="notes-modal">
     <div class="modal-header">
-      <h3>📝 笔记 Notes</h3>
+      <h3>Notes</h3>
       <button type="button" class="icon-btn" id="notes-modal-close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <textarea class="notes-area" id="notes-area" placeholder="在此记录你的想法…"></textarea>
-      <div class="notes-saved-indicator" id="notes-saved">已自动保存</div>
+      <textarea class="notes-area" id="notes-area" placeholder="Write something..."></textarea>
+      <div class="notes-saved-indicator" id="notes-saved">Auto-saved</div>
     </div>
   </div>
 </div>
 
-<!-- Hidden canvas for color extraction -->
 <canvas id="color-canvas" style="display:none"></canvas>
 
 <script src="js/main.js"></script>
