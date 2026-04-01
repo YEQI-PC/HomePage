@@ -490,14 +490,20 @@ const Clock = (() => {
     const now = new Date();
     const timeEl = $('#clock-time');
     const dateEl = $('#clock-date');
+    const timeLargeEl = $('#clock-time-large');
+    const dateLargeEl = $('#clock-date-large');
     if (!timeEl) return;
 
-    timeEl.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    timeEl.textContent = timeStr;
+    if (timeLargeEl) timeLargeEl.textContent = timeStr;
 
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
     const d = now.getDate();
-    dateEl.textContent = `${DAYS[now.getDay()]} 路 ${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const dateStr = `${DAYS[now.getDay()]} · ${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    dateEl.textContent = dateStr;
+    if (dateLargeEl) dateLargeEl.textContent = dateStr;
   }
 
   function init() {
@@ -527,14 +533,34 @@ const Weather = (() => {
 
       const code = cur.weatherCode;
       const icon = WEATHER_CODE_MAP[String(code)] ?? 'WX';
+      const temp = `${cur.temp_C}°C`;
+      const feelsLike = `${cur.FeelsLikeC}°C`;
+      const desc = cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '';
+      const humidity = `${cur.humidity}%`;
+      const wind = `${cur.windspeedKmph}km/h`;
 
+      // Update compact widget
       $('#weather-icon').textContent = icon;
-      $('#weather-temp').textContent = `${cur.temp_C}掳C`;
+      $('#weather-temp').textContent = temp;
       const feelsEl = $('#weather-feels');
-      if (feelsEl) feelsEl.textContent = `Feels ${cur.FeelsLikeC}掳C`;
-      $('#weather-desc').textContent = cur.lang_zh?.[0]?.value ?? cur.weatherDesc?.[0]?.value ?? '';
-      $('#weather-humidity').textContent = `H ${cur.humidity}%`;
-      $('#weather-wind').textContent = `W ${cur.windspeedKmph}km/h`;
+      if (feelsEl) feelsEl.textContent = `Feels ${feelsLike}`;
+      $('#weather-desc').textContent = desc;
+      $('#weather-humidity').textContent = `H ${humidity}`;
+      $('#weather-wind').textContent = `W ${wind}`;
+
+      // Update modal
+      const iconLargeEl = $('#weather-icon-large');
+      if (iconLargeEl) iconLargeEl.textContent = icon === 'WX' ? '☁️' : icon;
+      const tempLargeEl = $('#weather-temp-large');
+      if (tempLargeEl) tempLargeEl.textContent = temp;
+      const descLargeEl = $('#weather-desc-large');
+      if (descLargeEl) descLargeEl.textContent = desc;
+      const feelsLargeEl = $('#weather-feels-large');
+      if (feelsLargeEl) feelsLargeEl.textContent = feelsLike;
+      const humidityLargeEl = $('#weather-humidity-large');
+      if (humidityLargeEl) humidityLargeEl.textContent = humidity;
+      const windLargeEl = $('#weather-wind-large');
+      if (windLargeEl) windLargeEl.textContent = wind;
 
       loadingEl.classList.add('hidden');
       contentEl.classList.remove('hidden');
@@ -1180,7 +1206,8 @@ const Background = (() => {
   const bgPreview = $('#bg-preview');
   const bgStatus = $('#bg-status');
   const REMOTE_WALLPAPER_ENDPOINTS = [
-    'https://www.loliapi.com/acg/',
+    'https://api.waifu.pics/sfw/waifu',
+    'https://nekos.best/api/v2/neko',
   ];
   const CURATED_FALLBACKS = [
     'https://s3.nyeki.dev/nekos-api/images/original/343c1754-c917-45d5-bd92-aca02244c07f.webp',
@@ -1278,26 +1305,62 @@ const Background = (() => {
     const btn = $('#fetch-anime-btn');
     const origText = btn.innerHTML;
     setStatus('Loading random wallpaper...');
-    btn.innerHTML = '<span class="spinning">鈫?/span> Loading...';
+    btn.innerHTML = '<span class="spinning">↻</span> Loading...';
     btn.disabled = true;
-
-    const sources = [
-      ...REMOTE_WALLPAPER_ENDPOINTS.map(url => ({ type: 'remote', url: `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` })),
-      ...CURATED_FALLBACKS.map(url => ({ type: 'fallback', url })),
-    ];
 
     let lastErr = null;
 
     try {
-      for (const source of sources) {
+      // Try API endpoints that return JSON
+      for (const endpoint of REMOTE_WALLPAPER_ENDPOINTS) {
         try {
-          const dataUrl = await fetchImageAsDataUrl(source.url);
-          applyBg(dataUrl, source.type === 'fallback' ? 'Fallback wallpaper applied' : 'Random wallpaper updated');
-          setStatus(source.type === 'fallback' ? 'Primary source failed, using fallback wallpaper' : 'Wallpaper loaded');
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+          const res = await fetch(endpoint, {
+            signal: controller.signal,
+            mode: 'cors',
+            cache: 'no-store',
+          });
+          clearTimeout(timeoutId);
+
+          if (!res.ok) throw new Error(`API HTTP ${res.status}`);
+
+          let imageUrl;
+          const contentType = res.headers.get('content-type');
+
+          if (contentType && contentType.includes('application/json')) {
+            const data = await res.json();
+            // Handle different API response formats
+            if (data.url) {
+              imageUrl = data.url;
+            } else if (data.results && data.results[0] && data.results[0].url) {
+              imageUrl = data.results[0].url;
+            } else {
+              throw new Error('Invalid JSON response format');
+            }
+
+            const dataUrl = await fetchImageAsDataUrl(imageUrl);
+            applyBg(dataUrl, 'Random wallpaper updated');
+            setStatus('Wallpaper loaded');
+            return;
+          }
+        } catch (err) {
+          lastErr = err;
+          console.warn(`Failed to fetch wallpaper from ${endpoint}:`, err.message || err);
+        }
+      }
+
+      // Try fallback images
+      for (const fallbackUrl of CURATED_FALLBACKS) {
+        try {
+          const dataUrl = await fetchImageAsDataUrl(fallbackUrl);
+          applyBg(dataUrl, 'Fallback wallpaper applied');
+          setStatus('Using fallback wallpaper');
           return;
         } catch (err) {
           lastErr = err;
-          console.warn(`Failed to fetch wallpaper from ${source.url}:`, err.message || err);
+          console.warn(`Failed to fetch fallback from ${fallbackUrl}:`, err.message || err);
         }
       }
 
@@ -1561,6 +1624,74 @@ const SettingsPanel = (() => {
    Boot
    ================================================================ */
 
+// Clock Modal
+const ClockModal = (() => {
+  function open() {
+    $('#clock-modal-overlay').classList.add('open');
+  }
+
+  function close() {
+    $('#clock-modal-overlay').classList.remove('open');
+  }
+
+  function init() {
+    const overlay = $('#clock-modal-overlay');
+    const closeBtn = $('#clock-modal-close');
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', close);
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) close();
+      });
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        close();
+      }
+    });
+  }
+
+  return { init, open, close };
+})();
+
+// Weather Modal
+const WeatherModal = (() => {
+  function open() {
+    $('#weather-modal-overlay').classList.add('open');
+  }
+
+  function close() {
+    $('#weather-modal-overlay').classList.remove('open');
+  }
+
+  function init() {
+    const overlay = $('#weather-modal-overlay');
+    const closeBtn = $('#weather-modal-close');
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', close);
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) close();
+      });
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) {
+        close();
+      }
+    });
+  }
+
+  return { init, open, close };
+})();
+
 // Todo Modal
 const TodoModal = (() => {
   function open() {
@@ -1751,6 +1882,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ShortcutModal.init();
   Todo.init();
   Notes.init();
+  ClockModal.init();
+  WeatherModal.init();
   TodoModal.init();
   NotesModal.init();
   Recent.init();
@@ -1759,4 +1892,15 @@ document.addEventListener('DOMContentLoaded', () => {
   Background.init();
   SettingsPanel.init();
   CursorEffects.init();
+
+  // Add click listeners to open widget modals
+  const clockWidget = $('#clock-widget-compact');
+  if (clockWidget) {
+    clockWidget.addEventListener('click', () => ClockModal.open());
+  }
+
+  const weatherWidget = $('#weather-widget-compact');
+  if (weatherWidget) {
+    weatherWidget.addEventListener('click', () => WeatherModal.open());
+  }
 });

@@ -936,6 +936,87 @@ body.has-bg .bg-layer {
   color: var(--text-muted);
 }
 
+/* Clock Expanded View */
+.clock-expanded {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 30px 20px;
+}
+
+.clock-time-large {
+  font-size: 4rem;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px var(--primary-alpha-20);
+}
+
+.clock-date-large {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Weather Expanded View */
+.weather-expanded {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 30px 20px;
+}
+
+.weather-icon-large {
+  font-size: 5rem;
+  line-height: 1;
+}
+
+.weather-temp-large {
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-shadow: 0 2px 8px var(--primary-alpha-20);
+}
+
+.weather-desc-large {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.weather-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.weather-detail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.weather-detail-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.weather-detail-value {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
 /* ���� Content Area ���� */
 .content-area {
   display: flex;
@@ -1008,9 +1089,9 @@ body.has-bg .bg-layer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 14px;
-  justify-content: center;
+  justify-content: start;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .shortcut-card {
@@ -2154,10 +2235,10 @@ body::before {
   left: auto;
   right: auto;
   z-index: 20;
-  max-width: 1460px;
-  margin: calc(var(--toolbar-height) + 24px) auto 0;
+  max-width: 1200px;
+  margin: calc(var(--toolbar-height) + 32px) auto 0;
   padding: 0 24px;
-  gap: 18px;
+  gap: 24px;
   background: transparent;
   border-bottom: none;
   backdrop-filter: none;
@@ -2168,16 +2249,37 @@ body::before {
 }
 
 .widget-compact {
-  flex: 0 1 clamp(260px, 24vw, 320px);
-  min-height: 120px;
-  min-width: min(320px, 100%);
-  max-width: 320px;
-  padding: 18px 20px;
-  border-radius: 22px;
+  flex: 0 1 clamp(280px, 26vw, 360px);
+  min-height: 140px;
+  min-width: min(340px, 100%);
+  max-width: 360px;
+  padding: 22px 24px;
+  border-radius: 24px;
   background:
-    linear-gradient(135deg, var(--primary-alpha-08) 0%, transparent 58%),
+    linear-gradient(135deg, var(--primary-alpha-10) 0%, transparent 58%),
     var(--bg-card);
   box-shadow: var(--shadow-card);
+  transition: all var(--transition);
+}
+
+.widget-compact:hover {
+  border-color: var(--primary-alpha-50);
+  box-shadow: 0 8px 24px var(--primary-alpha-20);
+  transform: translateY(-4px);
+}
+
+.widget-compact.clickable {
+  cursor: pointer;
+}
+
+.widget-compact.clickable:hover {
+  border-color: var(--primary);
+  box-shadow: 0 12px 32px var(--primary-alpha-30);
+  transform: translateY(-6px);
+}
+
+.widget-compact.clickable:active {
+  transform: translateY(-2px);
 }
 
 .widget-compact-content {
@@ -2187,16 +2289,17 @@ body::before {
 }
 
 .widget-compact-icon {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
+  border-radius: 18px;
   background: linear-gradient(135deg, var(--primary-alpha-15), var(--accent-alpha-10));
+  color: var(--primary);
 }
 
 .widget-compact-info {
@@ -2260,6 +2363,7 @@ body::before {
   grid-template-columns: repeat(auto-fit, minmax(170px, 220px));
   gap: 18px;
   max-width: 1280px;
+  justify-content: start;
 }
 
 .shortcut-card {
@@ -2296,7 +2400,7 @@ body::before {
   top: 14px;
   right: 14px;
   bottom: 14px;
-  width: min(980px, calc(100vw - 28px));
+  width: min(860px, calc(100vw - 28px));
   border: 1px solid var(--border-color);
   border-radius: 30px;
   background:

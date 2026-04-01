@@ -69,7 +69,7 @@
 </header>
 
 <div class="widgets-bar" id="widgets-bar">
-  <div class="widget-compact clock-widget" id="clock-widget-compact" data-widget="clock">
+  <div class="widget-compact clock-widget clickable" id="clock-widget-compact" data-widget="clock" title="Click to view details">
     <div class="widget-compact-content">
       <span class="widget-compact-icon">TIME</span>
       <div class="widget-compact-info">
@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <div class="widget-compact weather-widget" id="weather-widget-compact" data-widget="weather">
+  <div class="widget-compact weather-widget clickable" id="weather-widget-compact" data-widget="weather" title="Click to view details">
     <div class="weather-loading" id="weather-loading">
       <div class="shimmer-line"></div>
       <div class="shimmer-line short"></div>
@@ -428,6 +428,55 @@
     <div class="modal-body">
       <textarea class="notes-area" id="notes-area" placeholder="Write something..."></textarea>
       <div class="notes-saved-indicator" id="notes-saved">Auto-saved</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="clock-modal-overlay">
+  <div class="modal widget-modal" id="clock-modal">
+    <div class="modal-header">
+      <h3>Clock</h3>
+      <button type="button" class="icon-btn" id="clock-modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="clock-expanded">
+        <div class="clock-time-large" id="clock-time-large">00:00:00</div>
+        <div class="clock-date-large" id="clock-date-large">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="weather-modal-overlay">
+  <div class="modal widget-modal" id="weather-modal">
+    <div class="modal-header">
+      <h3>Weather</h3>
+      <button type="button" class="icon-btn" id="weather-modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="weather-expanded" id="weather-expanded">
+        <div class="weather-icon-large" id="weather-icon-large">☁️</div>
+        <div class="weather-temp-large" id="weather-temp-large">--°C</div>
+        <div class="weather-desc-large" id="weather-desc-large">Loading weather...</div>
+        <div class="weather-details">
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">Feels like</span>
+            <span class="weather-detail-value" id="weather-feels-large">--°C</span>
+          </div>
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">Humidity</span>
+            <span class="weather-detail-value" id="weather-humidity-large">--%</span>
+          </div>
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">Wind</span>
+            <span class="weather-detail-value" id="weather-wind-large">-- km/h</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
