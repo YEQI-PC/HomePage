@@ -1,110 +1,74 @@
 # HomePage
-个人导航主页 · Personal Navigation Homepage
 
-一个极简、美观、功能丰富的个人导航主页，采用纯原生 JavaScript 开发，无任何框架依赖。
+个人主页 / 导航页，使用原生 HTML、CSS、JavaScript 实现。
 
-A minimalist, beautiful, and feature-rich personal navigation homepage built with pure vanilla JavaScript.
+## 当前状态
 
-## ✨ 特性 Features
+- 主页主体仍是纯前端页面。
+- 剪切板模块现在已经切换为服务端存储。
+- 文本记录和文件记录都会保存到运行站点的那台服务器上，方便多端访问同一份最近记录。
 
-### 🎨 视觉效果 Visual Effects
-- **动态主题切换** - 支持亮色/暗色主题一键切换
-- **自定义主题色** - 可自由定制主色调和强调色
-- **动漫壁纸** - 一键获取随机动漫壁纸，支持上传自定义图片
-- **智能取色** - 根据壁纸自动提取主题色
-- **鼠标特效** - 炫酷的鼠标跟随和点击粒子效果
-- **流畅动画** - 精心设计的页面加载、过渡和交互动画
+## 运行方式
 
-### 🎯 核心功能 Core Features
-- **快捷方式管理** - 可添加、编辑、删除快捷方式
-- **拖拽排序** - 支持拖拽快捷方式卡片重新排序
-- **分组管理** - 快捷方式按组别自动归类
-- **搜索引擎切换** - 支持 Google、百度、Bing、DuckDuckGo
-- **待办事项** - 简洁的待办清单，支持完成标记
-- **便签笔记** - 随手记录，自动保存
-- **最近访问** - 记录最近访问的网站
-- **书签收藏** - 快速收藏常用网站
+需要 Node.js 18 或更高版本。
 
-### 🎓 特色内容 Special Content
-- **北航专区** - 内置北航常用网站快捷方式
-  - 研究生院 (gsmis.buaa.edu.cn)
-  - 北航邮箱
-  - 教务处
-  - 图书馆
-  - 校园VPN
-
-### 📱 响应式设计 Responsive Design
-- 完美适配桌面端、平板和移动设备
-- 针对不同屏幕尺寸优化的布局
-- 触摸友好的交互设计
-
-### 💾 数据持久化 Data Persistence
-- 所有设置和数据本地存储
-- 无需注册，无需登录
-- 隐私保护，数据不上传
-
-## 🚀 快速开始 Getting Started
-
-直接在浏览器中打开 `index.html` 即可使用，无需任何构建步骤。
-
-Simply open `index.html` in your browser - no build steps required!
-
-## 📖 使用指南 Usage Guide
-
-### 添加快捷方式
-1. 点击右上角设置按钮 ⚙️
-2. 在快捷方式区域点击 "+" 添加快捷方式
-3. 填写名称、URL、图标（emoji）、分组和描述
-4. 保存即可
-
-### 拖拽排序
-直接拖动快捷方式卡片到目标位置即可重新排序
-
-### 自定义主题色
-1. 打开设置面板
-2. 在主题色区域选择喜欢的颜色
-3. 实时预览效果
-
-### 设置壁纸
-1. 打开设置面板
-2. 点击"随机动漫壁纸"获取随机壁纸
-3. 或点击"上传图片"使用自己的图片
-
-## 🛠 技术栈 Tech Stack
-
-- **纯原生 JavaScript** - 无框架依赖
-- **CSS3** - 现代 CSS 特性
-- **LocalStorage** - 本地数据持久化
-- **Canvas API** - 图片颜色提取
-- **Drag & Drop API** - 拖拽功能
-
-## 📁 项目结构 Project Structure
-
-```
-HomePage/
-├── index.html          # 主页面
-├── css/
-│   └── main.css       # 样式文件
-├── js/
-│   └── main.js        # 主逻辑
-└── README.md          # 说明文档
+```bash
+npm start
 ```
 
-## 🎯 未来计划 Future Plans
+或：
 
-- [ ] 天气小组件优化
-- [ ] 更多主题预设
-- [ ] 导入/导出配置
-- [ ] 云同步功能（可选）
-- [ ] 更多快捷方式图标库
+```bash
+node server.js
+```
 
-## 📝 License
+默认监听：
 
-MIT License
+```text
+http://0.0.0.0:3000
+```
 
-## 🤝 贡献 Contributing
+本机访问可直接打开：
 
-欢迎提交 Issue 和 Pull Request！
+```text
+http://localhost:3000
+```
 
-Issues and Pull Requests are welcome!
+如果你要让其他设备访问，请使用服务器的局域网 IP 或公网域名，例如：
 
+```text
+http://192.168.1.10:3000
+```
+
+## 剪切板存储说明
+
+- 草稿输入框内容仍会暂存在当前浏览器，避免刷新时丢失正在编辑的内容。
+- 真正保存后的剪切板历史会写入服务器磁盘。
+- 上传的文件不会放在浏览器 `IndexedDB` 或 `localStorage` 中。
+- 只要多台设备访问的是同一个站点地址，就能看到同一份剪切板历史。
+
+默认数据目录：
+
+```text
+storage/clipboard/
+```
+
+其中：
+
+- `storage/clipboard/history.json`：剪切板历史元数据
+- `storage/clipboard/files/`：已保存文件
+- `storage/clipboard/uploads/`：上传中的临时文件
+
+## 上传能力
+
+- 支持多文件上传
+- 前端显示上传进度
+- 服务端按流写入磁盘，避免一次性把大文件全部读入内存
+- 上传失败会返回错误信息
+- 过期的上传会话会自动清理
+
+## 注意事项
+
+- 不能再直接双击 `index.html` 用 `file://` 打开，否则服务器剪切板不可用。
+- 如果你部署在反向代理后面，请确保 `/api/clipboard/*` 请求能正确转发到 `server.js`。
+- `storage/` 已加入 `.gitignore`，默认不会提交到仓库。
