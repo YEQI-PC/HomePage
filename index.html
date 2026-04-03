@@ -3,10 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HomePage - Personal Start Page</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet" />
+  <meta name="color-scheme" content="light dark" />
+  <title>HomePage - 个人起始页</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23ece8ff'/%3E%3Cpath d='M32 13l5.4 13.6L51 32l-13.6 5.4L32 51l-5.4-13.6L13 32l13.6-5.4z' fill='%238b7fd4'/%3E%3C/svg%3E" />
+  <script>
+    (() => {
+      try {
+        const doc = document.documentElement;
+        const theme = JSON.parse(localStorage.getItem('hp_theme') || '"light"');
+        const bg = JSON.parse(localStorage.getItem('hp_bg') || 'null');
+
+        if (theme === 'dark' || theme === 'light') {
+          doc.setAttribute('data-theme', theme);
+        }
+
+        if (typeof bg === 'string' && bg) {
+          doc.classList.add('has-saved-bg');
+          doc.style.setProperty('--boot-bg-image', `url("${bg}")`);
+        }
+      } catch {}
+    })();
+  </script>
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
@@ -16,27 +33,32 @@
 
 <header class="toolbar" id="toolbar">
   <div class="toolbar-left">
-    <div class="logo">
-      <span class="logo-icon">*</span>
-      <span class="logo-text">HomePage</span>
+    <div class="logo" aria-label="HomePage">
+      <span class="logo-mark">
+        <span class="logo-icon">*</span>
+      </span>
+      <span class="logo-copy">
+        <span class="logo-text">HomePage</span>
+        <span class="logo-subtext">&#20010;&#20154;&#36215;&#22987;&#39029;</span>
+      </span>
     </div>
   </div>
 
   <div class="toolbar-center">
     <form class="search-form" id="search-form">
       <div class="search-wrap">
-        <button type="button" class="engine-btn" id="engine-btn" title="Switch search engine">
+        <button type="button" class="engine-btn" id="engine-btn" title="切换搜索引擎">
           <span id="engine-icon">G</span>
         </button>
         <input
           type="text"
           class="search-input"
           id="search-input"
-          placeholder="Search"
+          placeholder="搜索"
           autocomplete="off"
           spellcheck="false"
         />
-        <button type="submit" class="search-submit" title="Search">
+        <button type="submit" class="search-submit" title="搜索">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         </button>
       </div>
@@ -45,7 +67,7 @@
           <span class="engine-logo google">G</span> Google
         </button>
         <button type="button" class="engine-option" data-engine="baidu" data-icon="B" data-url="https://www.baidu.com/s?wd=">
-          <span class="engine-logo baidu">B</span> Baidu
+          <span class="engine-logo baidu">B</span> 百度
         </button>
         <button type="button" class="engine-option" data-engine="bing" data-icon="B" data-url="https://www.bing.com/search?q=">
           <span class="engine-logo bing">B</span> Bing
@@ -58,68 +80,156 @@
   </div>
 
   <div class="toolbar-right">
-    <button class="icon-btn" id="theme-toggle" title="Toggle theme">
+    <button class="icon-btn" id="theme-toggle" title="切换主题">
       <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
-    <button class="icon-btn" id="settings-btn" title="Settings">
+    <button class="icon-btn" id="settings-btn" title="打开设置">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
 </header>
 
+<section class="widgets-panel" id="widgets-panel" aria-label="顶部卡片">
+  <div class="widgets-panel-head">
+    <div class="widgets-panel-copy">
+      <div class="widgets-panel-label">顶部卡片</div>
+      <div class="widgets-panel-hint">时间、天气与剪切板</div>
+    </div>
+    <button type="button" class="widgets-panel-toggle" id="widgets-panel-toggle" aria-expanded="true" aria-controls="widgets-panel-body">
+      <span id="widgets-panel-toggle-text">收起卡片</span>
+      <svg class="widgets-panel-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>
+    </button>
+  </div>
+  <div class="widgets-panel-body" id="widgets-panel-body">
 <div class="widgets-bar" id="widgets-bar">
-  <div class="widget-compact clock-widget" id="clock-widget-compact" data-widget="clock">
-    <div class="widget-compact-content">
-      <span class="widget-compact-icon">TIME</span>
-      <div class="widget-compact-info">
-        <div class="clock-time-compact" id="clock-time">00:00:00</div>
-        <div class="clock-date-compact" id="clock-date">Loading...</div>
+  <div class="widget-compact widget-time clickable" id="clock-widget-compact" data-widget="clock" title="打开日历">
+    <div class="widget-card-head">
+      <div class="widget-title-wrap">
+        <div class="widget-label">时间</div>
+        <div class="widget-title">今日时间</div>
       </div>
+      <button type="button" class="widget-expand-btn" id="clock-widget-open" aria-label="打开时间详情">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+      </button>
+    </div>
+    <div class="widget-time-main">
+      <div class="clock-time-compact" id="clock-time">00:00:00</div>
+      <div class="clock-date-compact" id="clock-date">加载中...</div>
+      <div class="widget-meta-line">点击展开查看月历</div>
     </div>
   </div>
 
-  <div class="widget-compact weather-widget" id="weather-widget-compact" data-widget="weather">
-    <div class="weather-loading" id="weather-loading">
+  <div class="widget-compact widget-weather clickable" id="weather-widget-compact" data-widget="weather" title="打开天气详情">
+    <div class="widget-card-head">
+      <div class="widget-title-wrap">
+        <div class="widget-label">天气</div>
+        <div class="widget-title">当前天气</div>
+      </div>
+      <button type="button" class="widget-expand-btn" id="weather-widget-open" aria-label="打开天气详情">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+      </button>
+    </div>
+    <div class="weather-loading widget-loading-card" id="weather-loading">
       <div class="shimmer-line"></div>
       <div class="shimmer-line short"></div>
     </div>
-    <div class="weather-content hidden widget-compact-content" id="weather-content">
-      <span class="weather-icon widget-compact-icon" id="weather-icon">WX</span>
-      <div class="widget-compact-info">
-        <div class="weather-main-compact">
-          <span class="weather-temp" id="weather-temp">--°C</span>
-          <span class="weather-feels" id="weather-feels"></span>
-          <span class="weather-desc-compact" id="weather-desc">Loading weather...</span>
+    <div class="weather-card-shell hidden" id="weather-content">
+      <div class="weather-hero">
+        <div class="weather-icon-badge">
+          <span class="weather-icon" id="weather-icon">WX</span>
         </div>
-        <div class="weather-meta-compact">
-          <span id="weather-humidity">H --%</span>
-          <span id="weather-wind">W --km/h</span>
+        <div class="weather-hero-copy">
+          <div class="weather-location" id="weather-location">定位中...</div>
+          <div class="weather-main-compact">
+            <span class="weather-temp" id="weather-temp">--°C</span>
+            <span class="weather-desc-compact" id="weather-desc">加载中...</span>
+          </div>
+          <div class="weather-feels" id="weather-feels">体感 --°C</div>
         </div>
+      </div>
+      <div class="weather-metric-stack">
+        <div class="weather-metric">
+          <div class="weather-metric-row">
+            <span>降雨概率</span>
+            <strong id="weather-rain-chance">--%</strong>
+          </div>
+          <div class="widget-meter"><span id="weather-rain-bar"></span></div>
+        </div>
+        <div class="weather-metric">
+          <div class="weather-metric-row">
+            <span>湿度</span>
+            <strong id="weather-humidity">--%</strong>
+          </div>
+          <div class="widget-meter"><span id="weather-humidity-bar"></span></div>
+        </div>
+      </div>
+      <div class="weather-card-footer">
+        <span id="weather-wind">风速 -- km/h</span>
+        <span id="weather-uv">紫外线 --</span>
       </div>
     </div>
   </div>
 
-  <div class="widget-compact todo-widget clickable" id="todo-widget-compact" data-widget="todo" title="Open todo">
-    <div class="widget-compact-content">
-      <span class="widget-compact-icon">TODO</span>
-      <div class="widget-compact-info">
-        <div class="todo-summary">Todo</div>
-        <div class="todo-count" id="todo-count-compact">0 items</div>
+  <div class="widget-compact widget-clipboard" id="clipboard-widget-compact" data-widget="clipboard">
+    <div class="widget-card-head">
+      <div class="widget-title-wrap">
+        <div class="widget-label">剪切板</div>
+        <div class="widget-title">文本与文件暂存</div>
+      </div>
+      <button type="button" class="widget-expand-btn" id="clipboard-widget-open" aria-label="打开剪切板详情">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+      </button>
+    </div>
+    <div class="clipboard-card-section">
+      <div class="clipboard-section-head">
+        <span class="clipboard-section-label">文本暂存</span>
+        <span class="clipboard-count" id="clipboard-count-compact">0 条记录</span>
+      </div>
+      <textarea class="clipboard-card-input" id="clipboard-card-input" placeholder="粘贴或输入要保存的内容..."></textarea>
+      <div class="clipboard-card-actions">
+        <button type="button" class="widget-action-btn" id="clipboard-save-btn">保存文本</button>
       </div>
     </div>
-  </div>
-
-  <div class="widget-compact notes-widget clickable" id="notes-widget-compact" data-widget="notes" title="Open notes">
-    <div class="widget-compact-content">
-      <span class="widget-compact-icon">NOTE</span>
-      <div class="widget-compact-info">
-        <div class="notes-summary">Notes</div>
-        <div class="notes-preview" id="notes-preview-compact">No content</div>
+    <div class="clipboard-file-panel clipboard-file-panel-compact">
+      <div class="clipboard-section-head">
+        <span class="clipboard-section-label">文件暂存</span>
+        <button type="button" class="text-btn" id="clipboard-card-file-select-btn">选择文件</button>
       </div>
+      <input type="file" id="clipboard-card-file-input" class="clipboard-file-input" multiple hidden />
+      <div class="clipboard-dropzone" id="clipboard-card-dropzone" tabindex="0">
+        <strong>拖入多个文件到这里</strong>
+        <span>文件会上传并暂存到当前服务器，其他设备也可访问</span>
+      </div>
+      <div class="clipboard-file-summary" id="clipboard-card-file-summary">当前未选择文件</div>
+      <div class="clipboard-upload-feedback" id="clipboard-card-upload-feedback">
+        <div class="clipboard-upload-progress" id="clipboard-card-upload-progress" hidden>
+          <span class="clipboard-upload-progress-bar" id="clipboard-card-upload-progress-bar"></span>
+        </div>
+        <div class="clipboard-upload-text" id="clipboard-card-upload-text">等待上传到服务器</div>
+      </div>
+      <div class="clipboard-pending-list" id="clipboard-card-pending-list">
+        <p class="clipboard-empty-hint">暂无待暂存文件。</p>
+      </div>
+      <div class="clipboard-file-actions">
+        <button type="button" class="widget-action-btn" id="clipboard-card-file-save-btn">暂存文件</button>
+        <button type="button" class="btn-secondary btn-mini" id="clipboard-card-file-clear-btn">清空待选</button>
+      </div>
+    </div>
+    <div class="clipboard-history-panel clipboard-history-panel-compact">
+      <div class="clipboard-section-head">
+        <span class="clipboard-section-label">最近记录</span>
+        <span class="clipboard-history-tip">点击即可复制或下载</span>
+      </div>
+      <div class="clipboard-card-history" id="clipboard-card-history">
+        <p class="clipboard-empty-hint">暂无保存的剪切板内容。</p>
+      </div>
+      <div class="clipboard-inline-status" id="clipboard-inline-status">点击记录即可复制文本或下载文件。</div>
     </div>
   </div>
 </div>
+  </div>
+</section>
 
 <main class="main-layout">
   <section class="content-area">
@@ -127,21 +237,21 @@
 
     <div class="content-block" id="recent-block">
       <div class="block-header">
-        <h2 class="block-title">Recent</h2>
-        <button type="button" class="text-btn" id="clear-recent-btn">Clear</button>
+        <h2 class="block-title">最近访问</h2>
+        <button type="button" class="text-btn" id="clear-recent-btn">清空</button>
       </div>
       <div class="recent-list" id="recent-list">
-        <p class="empty-hint">No recent items</p>
+        <p class="empty-hint">暂无最近访问记录</p>
       </div>
     </div>
 
     <div class="content-block" id="bookmarks-block">
       <div class="block-header">
-        <h2 class="block-title">Bookmarks</h2>
-        <button type="button" class="text-btn" id="add-bookmark-btn">+ Add</button>
+        <h2 class="block-title">书签</h2>
+        <button type="button" class="text-btn" id="add-bookmark-btn">+ 添加</button>
       </div>
       <div class="bookmarks-grid" id="bookmarks-grid">
-        <p class="empty-hint">No bookmarks yet</p>
+        <p class="empty-hint">暂无书签</p>
       </div>
     </div>
   </section>
@@ -151,30 +261,30 @@
 <aside class="settings-panel" id="settings-panel">
   <div class="settings-header">
     <div class="settings-header-content">
-      <h2>Settings</h2>
-      <p class="settings-subtitle">Theme, wallpaper, layout, widgets, and shortcut controls.</p>
+      <h2>设置</h2>
+      <p class="settings-subtitle">管理壁纸、主题、天气、小组件和快捷方式。</p>
     </div>
-    <button type="button" class="icon-btn" id="settings-close">
+    <button type="button" class="icon-btn" id="settings-close" title="关闭设置">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
 
   <div class="settings-body">
     <div class="settings-section settings-section-wide">
-      <h3 class="settings-section-title">Wallpaper</h3>
+      <h3 class="settings-section-title">壁纸</h3>
       <div class="settings-row">
         <button type="button" class="settings-action-btn" id="fetch-anime-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-          Random wallpaper
+          随机壁纸
         </button>
         <label class="settings-action-btn" for="bg-upload">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-          Upload image
+          上传图片
           <input type="file" id="bg-upload" accept="image/*" style="display:none" />
         </label>
         <button type="button" class="settings-action-btn" id="clear-bg-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-          Clear wallpaper
+          清除壁纸
         </button>
       </div>
       <div class="bg-preview-wrap">
@@ -184,44 +294,44 @@
 
       <div class="bg-options">
         <label class="bg-option-label">
-          <span>Display mode</span>
+          <span>显示模式</span>
           <select id="bg-display-mode" class="bg-select">
-            <option value="cover">Cover</option>
-            <option value="contain">Contain</option>
-            <option value="fill">Fill</option>
-            <option value="custom">Custom</option>
+            <option value="cover">裁切填充</option>
+            <option value="contain">完整显示</option>
+            <option value="fill">拉伸填充</option>
+            <option value="custom">自定义</option>
           </select>
         </label>
 
         <div id="bg-custom-options" class="bg-custom-options hidden">
           <label class="bg-option-label">
-            <span>Size (%)</span>
+            <span>缩放 (%)</span>
             <input type="number" id="bg-size" class="bg-input" value="100" min="10" max="200" />
           </label>
           <label class="bg-option-label">
-            <span>Offset X (%)</span>
+            <span>水平偏移 (%)</span>
             <input type="number" id="bg-position-x" class="bg-input" value="50" min="0" max="100" />
           </label>
           <label class="bg-option-label">
-            <span>Offset Y (%)</span>
+            <span>垂直偏移 (%)</span>
             <input type="number" id="bg-position-y" class="bg-input" value="50" min="0" max="100" />
           </label>
         </div>
 
         <label class="bg-option-label">
-          <span>Blur (px)</span>
+          <span>模糊 (px)</span>
           <input type="range" id="bg-blur" class="bg-slider" min="0" max="20" value="1" step="0.5" />
           <span class="bg-value" id="bg-blur-value">1px</span>
         </label>
 
         <label class="bg-option-label">
-          <span>Opacity</span>
+          <span>透明度</span>
           <input type="range" id="bg-opacity" class="bg-slider" min="0.1" max="1" value="1" step="0.1" />
           <span class="bg-value" id="bg-opacity-value">100%</span>
         </label>
 
         <label class="bg-option-label">
-          <span>Saturation</span>
+          <span>饱和度</span>
           <input type="range" id="bg-saturation" class="bg-slider" min="0" max="2" value="1" step="0.1" />
           <span class="bg-value" id="bg-saturation-value">100%</span>
         </label>
@@ -229,103 +339,110 @@
     </div>
 
     <div class="settings-section">
-      <h3 class="settings-section-title">Theme Colors</h3>
+      <h3 class="settings-section-title">主题颜色</h3>
       <div class="theme-sync-status">
-        <span class="theme-source-label">Theme source</span>
-        <strong class="theme-source-value" id="theme-source-value">Default</strong>
+        <span class="theme-source-label">颜色来源</span>
+        <strong class="theme-source-value" id="theme-source-value">默认</strong>
       </div>
 
       <div class="preset-themes">
-        <button type="button" class="theme-preset" data-primary="#8b7fd4" data-accent="#c9a0dc" title="Lavender">
+        <button type="button" class="theme-preset" data-primary="#8b7fd4" data-accent="#c9a0dc" title="薰衣草">
           <span class="preset-dot" style="background: #8b7fd4;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#ff6b9d" data-accent="#ff8fab" title="Rose">
+        <button type="button" class="theme-preset" data-primary="#ff6b9d" data-accent="#ff8fab" title="玫瑰">
           <span class="preset-dot" style="background: #ff6b9d;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#4FC3F7" data-accent="#81D4FA" title="Sky">
+        <button type="button" class="theme-preset" data-primary="#4FC3F7" data-accent="#81D4FA" title="晴空">
           <span class="preset-dot" style="background: #4FC3F7;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#66BB6A" data-accent="#81C784" title="Green">
+        <button type="button" class="theme-preset" data-primary="#66BB6A" data-accent="#81C784" title="森林">
           <span class="preset-dot" style="background: #66BB6A;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#FFB74D" data-accent="#FFCC80" title="Amber">
+        <button type="button" class="theme-preset" data-primary="#FFB74D" data-accent="#FFCC80" title="琥珀">
           <span class="preset-dot" style="background: #FFB74D;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#BA68C8" data-accent="#CE93D8" title="Violet">
+        <button type="button" class="theme-preset" data-primary="#BA68C8" data-accent="#CE93D8" title="紫藤">
           <span class="preset-dot" style="background: #BA68C8;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#EF5350" data-accent="#E57373" title="Red">
+        <button type="button" class="theme-preset" data-primary="#EF5350" data-accent="#E57373" title="珊瑚">
           <span class="preset-dot" style="background: #EF5350;"></span>
         </button>
-        <button type="button" class="theme-preset" data-primary="#26A69A" data-accent="#4DB6AC" title="Teal">
+        <button type="button" class="theme-preset" data-primary="#26A69A" data-accent="#4DB6AC" title="湖绿">
           <span class="preset-dot" style="background: #26A69A;"></span>
         </button>
       </div>
 
       <div class="color-picker-wrap">
         <label class="color-picker-label">
-          <span>Primary</span>
+          <span>主色</span>
           <input type="color" id="primary-color-picker" value="#8b7fd4" />
         </label>
         <label class="color-picker-label">
-          <span>Accent</span>
+          <span>强调色</span>
           <input type="color" id="accent-color-picker" value="#c9a0dc" />
         </label>
       </div>
       <div class="settings-row">
-        <button type="button" class="settings-action-btn" id="reset-colors-btn">
-          Reset colors
-        </button>
+        <button type="button" class="settings-action-btn" id="reset-colors-btn">恢复默认颜色</button>
       </div>
     </div>
 
     <div class="settings-section">
-      <h3 class="settings-section-title">Effects</h3>
+      <h3 class="settings-section-title">天气</h3>
+      <div class="settings-stack">
+        <label class="settings-field">
+          <span>天气位置</span>
+          <input type="text" id="weather-location-input" placeholder="留空则自动定位，例如：北京 / Tokyo" />
+        </label>
+        <div class="settings-row">
+          <button type="button" class="settings-action-btn primary" id="weather-location-save-btn">保存位置</button>
+          <button type="button" class="settings-action-btn" id="weather-refresh-btn">立即刷新</button>
+        </div>
+        <p class="settings-hint" id="weather-settings-status">留空时使用自动定位天气。</p>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title">交互效果</h3>
       <div class="settings-toggle-row">
         <label class="toggle-label">
-          <span>Cursor effects</span>
+          <span>鼠标特效</span>
           <input type="checkbox" id="cursor-effects-toggle" checked />
         </label>
       </div>
     </div>
 
     <div class="settings-section">
-      <h3 class="settings-section-title">Widgets</h3>
+      <h3 class="settings-section-title">顶部卡片</h3>
       <div class="settings-toggle-row">
         <label class="toggle-label">
-          <span>Clock</span>
+          <span>时间</span>
           <input type="checkbox" id="widget-clock-toggle" checked />
         </label>
         <label class="toggle-label">
-          <span>Weather</span>
+          <span>天气</span>
           <input type="checkbox" id="widget-weather-toggle" checked />
         </label>
         <label class="toggle-label">
-          <span>Todo</span>
-          <input type="checkbox" id="widget-todo-toggle" checked />
-        </label>
-        <label class="toggle-label">
-          <span>Notes</span>
-          <input type="checkbox" id="widget-notes-toggle" checked />
+          <span>剪切板</span>
+          <input type="checkbox" id="widget-clipboard-toggle" checked />
         </label>
       </div>
     </div>
 
     <div class="settings-section settings-section-wide">
-      <h3 class="settings-section-title">Shortcuts</h3>
+      <h3 class="settings-section-title">快捷方式</h3>
       <div class="settings-row">
-        <button type="button" class="settings-action-btn primary" id="add-shortcut-btn">
-          + Add shortcut
-        </button>
+        <button type="button" class="settings-action-btn primary" id="add-shortcut-btn">+ 添加快捷方式</button>
       </div>
-      <p class="settings-hint">Tip: drag cards to reorder shortcuts.</p>
+      <p class="settings-hint">提示：快捷卡片支持拖拽排序。</p>
       <div id="shortcut-manager-list" class="shortcut-manager-list"></div>
     </div>
 
     <div class="settings-section">
-      <h3 class="settings-section-title">About</h3>
-      <p class="settings-about-text">A lightweight personal dashboard for daily links and tools.</p>
-      <p class="settings-about-text" style="margin-top:4px;opacity:.6;font-size:.75rem;">Data is stored locally. No tracking.</p>
+      <h3 class="settings-section-title">关于</h3>
+      <p class="settings-about-text">一个轻量的个人起始页，用来放常用链接、剪切板内容和工具信息。</p>
+      <p class="settings-about-text" style="margin-top:4px;opacity:.6;font-size:.75rem;">剪切板、天气位置、快捷方式、最近访问、书签，以及主题/搜索/小组件偏好都会同步到当前服务器；壁纸图片仍保存在当前浏览器。</p>
     </div>
   </div>
 </aside>
@@ -333,36 +450,36 @@
 <div class="modal-overlay" id="shortcut-modal-overlay">
   <div class="modal" id="shortcut-modal">
     <div class="modal-header">
-      <h3 id="shortcut-modal-title">Add shortcut</h3>
-      <button type="button" class="icon-btn" id="shortcut-modal-close">
+      <h3 id="shortcut-modal-title">添加快捷方式</h3>
+      <button type="button" class="icon-btn" id="shortcut-modal-close" title="关闭">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <form id="shortcut-form" class="modal-form">
       <input type="hidden" id="shortcut-edit-id" />
       <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="shortcut-name" placeholder="e.g. GitHub" required maxlength="30" />
+        <label>名称</label>
+        <input type="text" id="shortcut-name" placeholder="例如：GitHub" required maxlength="30" />
       </div>
       <div class="form-group">
-        <label>URL</label>
+        <label>链接</label>
         <input type="url" id="shortcut-url" placeholder="https://" required />
       </div>
       <div class="form-group">
-        <label>Icon</label>
-        <input type="text" id="shortcut-icon" placeholder="e.g. GH" maxlength="4" />
+        <label>图标</label>
+        <input type="text" id="shortcut-icon" placeholder="例如：GH" maxlength="4" />
       </div>
       <div class="form-group">
-        <label>Group</label>
-        <input type="text" id="shortcut-group" placeholder="e.g. Work" required maxlength="20" />
+        <label>分组</label>
+        <input type="text" id="shortcut-group" placeholder="例如：常用" required maxlength="20" />
       </div>
       <div class="form-group">
-        <label>Description</label>
-        <input type="text" id="shortcut-desc" placeholder="Short note" maxlength="50" />
+        <label>描述</label>
+        <input type="text" id="shortcut-desc" placeholder="一句简短说明" maxlength="50" />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="shortcut-cancel-btn">Cancel</button>
-        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" class="btn-secondary" id="shortcut-cancel-btn">取消</button>
+        <button type="submit" class="btn-primary">保存</button>
       </div>
     </form>
   </div>
@@ -371,63 +488,185 @@
 <div class="modal-overlay" id="bookmark-modal-overlay">
   <div class="modal" id="bookmark-modal">
     <div class="modal-header">
-      <h3>Add bookmark</h3>
-      <button type="button" class="icon-btn" id="bookmark-modal-close">
+      <h3>添加书签</h3>
+      <button type="button" class="icon-btn" id="bookmark-modal-close" title="关闭">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <form id="bookmark-form" class="modal-form">
       <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="bookmark-name" placeholder="e.g. Blog" required maxlength="40" />
+        <label>名称</label>
+        <input type="text" id="bookmark-name" placeholder="例如：博客" required maxlength="40" />
       </div>
       <div class="form-group">
-        <label>URL</label>
+        <label>链接</label>
         <input type="url" id="bookmark-url" placeholder="https://" required />
       </div>
       <div class="form-group">
-        <label>Icon</label>
-        <input type="text" id="bookmark-icon" placeholder="BM" maxlength="4" />
+        <label>图标</label>
+        <input type="text" id="bookmark-icon" placeholder="例如：BM" maxlength="4" />
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" id="bookmark-cancel-btn">Cancel</button>
-        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" class="btn-secondary" id="bookmark-cancel-btn">取消</button>
+        <button type="submit" class="btn-primary">保存</button>
       </div>
     </form>
   </div>
 </div>
 
-<div class="modal-overlay" id="todo-modal-overlay">
-  <div class="modal widget-modal" id="todo-modal">
+<div class="modal-overlay" id="clipboard-modal-overlay">
+  <div class="modal widget-modal" id="clipboard-modal">
     <div class="modal-header">
-      <h3>Todo</h3>
-      <button type="button" class="icon-btn" id="todo-modal-close">
+      <h3>剪切板</h3>
+      <button type="button" class="icon-btn" id="clipboard-modal-close" title="关闭">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <div class="todo-input-wrap">
-        <input type="text" id="todo-input" placeholder="Add a task..." />
-        <button type="button" class="add-btn" id="todo-add-btn" title="Add">+</button>
+      <div class="clipboard-workspace">
+        <div class="clipboard-editor-panel">
+          <div class="clipboard-section-head">
+            <span class="clipboard-panel-title">文本编辑区</span>
+            <span class="clipboard-history-tip">支持 Ctrl/Cmd + Enter 快速保存</span>
+          </div>
+          <textarea class="clipboard-area" id="clipboard-area" placeholder="粘贴或输入需要保留的内容..."></textarea>
+          <div class="clipboard-toolbar">
+            <button type="button" class="btn-primary" id="clipboard-modal-save-btn">保存到历史</button>
+            <button type="button" class="btn-secondary" id="clipboard-copy-current-btn">复制当前内容</button>
+            <div class="clipboard-saved-indicator" id="clipboard-saved">已切换为服务器存储，保存后可多端访问。</div>
+          </div>
+        </div>
+        <div class="clipboard-file-panel clipboard-file-panel-modal">
+          <div class="clipboard-section-head">
+            <span class="clipboard-panel-title">文件暂存区</span>
+            <button type="button" class="btn-secondary btn-mini" id="clipboard-file-select-btn">选择文件</button>
+          </div>
+          <input type="file" id="clipboard-file-input" class="clipboard-file-input" multiple hidden />
+          <div class="clipboard-dropzone" id="clipboard-file-dropzone" tabindex="0">
+            <strong>拖入多个文件到这里</strong>
+            <span>上传后会保存在当前服务器，其他设备打开此页也能下载</span>
+          </div>
+          <div class="clipboard-file-summary" id="clipboard-file-summary">当前未选择文件</div>
+          <div class="clipboard-upload-feedback" id="clipboard-upload-feedback">
+            <div class="clipboard-upload-progress" id="clipboard-upload-progress" hidden>
+              <span class="clipboard-upload-progress-bar" id="clipboard-upload-progress-bar"></span>
+            </div>
+            <div class="clipboard-upload-text" id="clipboard-upload-text">等待上传到服务器</div>
+          </div>
+          <div class="clipboard-pending-list clipboard-pending-list-modal" id="clipboard-pending-list">
+            <p class="clipboard-empty-hint">暂无待暂存文件。</p>
+          </div>
+          <div class="clipboard-file-actions">
+            <button type="button" class="btn-primary" id="clipboard-file-save-btn">暂存文件</button>
+            <button type="button" class="btn-secondary" id="clipboard-file-clear-btn">清空待选</button>
+          </div>
+        </div>
       </div>
-      <ul class="todo-list" id="todo-list">
-        <li class="todo-empty-hint">No tasks yet.</li>
-      </ul>
+      <div class="clipboard-history-panel">
+        <div class="clipboard-history-head">
+          <h4>历史记录</h4>
+          <button type="button" class="text-btn" id="clipboard-clear-btn">清空</button>
+        </div>
+        <div class="clipboard-history-list" id="clipboard-history-list">
+          <p class="clipboard-empty-hint">暂无保存的内容。</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="notes-modal-overlay">
-  <div class="modal widget-modal" id="notes-modal">
+<div class="modal-overlay" id="clock-modal-overlay">
+  <div class="modal widget-modal" id="clock-modal">
     <div class="modal-header">
-      <h3>Notes</h3>
-      <button type="button" class="icon-btn" id="notes-modal-close">
+      <h3>时间与日历</h3>
+      <button type="button" class="icon-btn" id="clock-modal-close" title="关闭">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <textarea class="notes-area" id="notes-area" placeholder="Write something..."></textarea>
-      <div class="notes-saved-indicator" id="notes-saved">Auto-saved</div>
+      <div class="clock-expanded">
+        <div class="clock-time-large" id="clock-time-large">00:00:00</div>
+        <div class="clock-date-large" id="clock-date-large">加载中...</div>
+      </div>
+      <div class="calendar-panel">
+        <div class="calendar-toolbar">
+          <button type="button" class="calendar-nav-btn" id="clock-prev-month" aria-label="上个月">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="calendar-month-label" id="calendar-month-label">加载中...</div>
+          <button type="button" class="calendar-nav-btn" id="clock-next-month" aria-label="下个月">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="calendar-weekdays">
+          <span>一</span>
+          <span>二</span>
+          <span>三</span>
+          <span>四</span>
+          <span>五</span>
+          <span>六</span>
+          <span>日</span>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="weather-modal-overlay">
+  <div class="modal widget-modal" id="weather-modal">
+    <div class="modal-header">
+      <h3>天气详情</h3>
+      <button type="button" class="icon-btn" id="weather-modal-close" title="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="weather-expanded" id="weather-expanded">
+        <div class="weather-modal-toolbar">
+          <div class="weather-chip-group">
+            <span class="weather-meta-chip" id="weather-sync-note">数据来源 wttr.in</span>
+            <span class="weather-meta-chip weather-meta-chip-soft" id="weather-updated-at">等待刷新</span>
+          </div>
+          <button type="button" class="btn-secondary weather-modal-refresh-btn" id="weather-modal-refresh-btn">立即刷新</button>
+        </div>
+        <div class="weather-now-card">
+          <div class="weather-icon-large" id="weather-icon-large">☁</div>
+          <div class="weather-now-copy">
+            <div class="weather-location-large" id="weather-location-large">定位中...</div>
+            <div class="weather-temp-large" id="weather-temp-large">--°C</div>
+            <div class="weather-desc-large" id="weather-desc-large">加载中...</div>
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">体感温度</span>
+            <span class="weather-detail-value" id="weather-feels-large">--°C</span>
+          </div>
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">湿度</span>
+            <span class="weather-detail-value" id="weather-humidity-large">--%</span>
+          </div>
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">风速</span>
+            <span class="weather-detail-value" id="weather-wind-large">-- km/h</span>
+          </div>
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">降雨</span>
+            <span class="weather-detail-value" id="weather-rain-large">--%</span>
+          </div>
+          <div class="weather-detail-item">
+            <span class="weather-detail-label">紫外线</span>
+            <span class="weather-detail-value" id="weather-uv-large">--</span>
+          </div>
+        </div>
+        <div class="weather-forecast-panel">
+          <div class="weather-forecast-title">近期天气</div>
+          <div class="weather-forecast-list" id="weather-forecast-list">
+            <p class="weather-empty-hint">天气预报加载中...</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
