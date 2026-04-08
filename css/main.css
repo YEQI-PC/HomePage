@@ -3880,7 +3880,7 @@ body.overlay-open {
   grid-template-areas:
     "time clipboard"
     "weather clipboard";
-  grid-template-rows: var(--widget-time-height) var(--widget-weather-height);
+  grid-template-rows: minmax(var(--widget-time-height), auto) minmax(var(--widget-weather-height), auto);
   gap: var(--page-gap);
   align-items: stretch;
   margin-bottom: var(--widgets-bottom-gap);
@@ -3888,12 +3888,12 @@ body.overlay-open {
 
 .widgets-bar.layout-only-clock {
   grid-template-areas: "time clipboard";
-  grid-template-rows: var(--widget-tall-height);
+  grid-template-rows: minmax(var(--widget-tall-height), auto);
 }
 
 .widgets-bar.layout-only-weather {
   grid-template-areas: "weather clipboard";
-  grid-template-rows: var(--widget-tall-height);
+  grid-template-rows: minmax(var(--widget-tall-height), auto);
 }
 
 .widgets-bar.layout-no-left {
@@ -3907,20 +3907,20 @@ body.overlay-open {
   grid-template-areas:
     "time"
     "weather";
-  grid-template-rows: var(--widget-time-height) var(--widget-weather-height);
+  grid-template-rows: minmax(var(--widget-time-height), auto) minmax(var(--widget-weather-height), auto);
   justify-content: start;
 }
 
 .widgets-bar.layout-no-clipboard.layout-only-clock {
   grid-template-columns: minmax(280px, 420px);
   grid-template-areas: "time";
-  grid-template-rows: var(--widget-time-height);
+  grid-template-rows: minmax(var(--widget-time-height), auto);
 }
 
 .widgets-bar.layout-no-clipboard.layout-only-weather {
   grid-template-columns: minmax(300px, 520px);
   grid-template-areas: "weather";
-  grid-template-rows: var(--widget-weather-height);
+  grid-template-rows: minmax(var(--widget-weather-height), auto);
 }
 
 .widgets-bar.layout-no-clipboard.layout-no-left,
@@ -3930,14 +3930,17 @@ body.overlay-open {
 
 #clock-widget-compact {
   grid-area: time;
+  min-height: var(--widget-time-height);
 }
 
 #weather-widget-compact {
   grid-area: weather;
+  min-height: var(--widget-weather-height);
 }
 
 #clipboard-widget-compact {
   grid-area: clipboard;
+  min-height: var(--widget-tall-height);
 }
 
 .widgets-bar .widget-compact {
@@ -3945,7 +3948,7 @@ body.overlay-open {
   max-width: none;
   min-width: 0;
   min-height: 0;
-  height: 100%;
+  height: auto;
   overflow: hidden;
   padding: 16px 18px;
   gap: 12px;
@@ -4073,14 +4076,16 @@ body.overlay-open {
   width: 100%;
   justify-self: stretch;
   align-self: stretch;
-  grid-template-columns: minmax(0, 1.04fr) minmax(240px, 0.96fr);
+  grid-template-columns: minmax(0, 1.06fr) minmax(280px, 0.94fr);
   grid-template-rows: auto auto minmax(0, 1fr);
   grid-template-areas:
     "head head"
     "text files"
-    "history history";
+    "history files";
   align-content: stretch;
   gap: 12px;
+  container-type: inline-size;
+  container-name: clipboard-compact;
 }
 
 .clipboard-card-section,
@@ -4226,8 +4231,7 @@ body.overlay-open {
 }
 
 #clipboard-widget-compact .clipboard-dropzone {
-  min-height: 74px;
-  max-height: 74px;
+  min-height: 82px;
   padding: 10px 12px;
   border-radius: 16px;
 }
@@ -4272,10 +4276,10 @@ body.overlay-open {
   flex-direction: column;
   gap: 8px;
   min-height: 0;
+  contain: layout paint style;
 }
 
 #clipboard-widget-compact .clipboard-pending-list {
-  max-height: 68px;
   overflow-y: auto;
 }
 
@@ -4293,14 +4297,23 @@ body.overlay-open {
 
 #clipboard-widget-compact .clipboard-card-section {
   grid-area: text;
+  display: grid;
+  grid-template-rows: auto minmax(96px, auto) auto;
+  align-content: start;
 }
 
 #clipboard-widget-compact .clipboard-file-panel-compact {
   grid-area: files;
+  display: grid;
+  grid-template-rows: auto minmax(82px, auto) auto auto minmax(0, 1fr) auto;
+  align-content: start;
 }
 
 #clipboard-widget-compact .clipboard-history-panel-compact {
   grid-area: history;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: start;
 }
 
 #clipboard-widget-compact .clipboard-section-head {
@@ -4318,9 +4331,12 @@ body.overlay-open {
 
 #clipboard-widget-compact .clipboard-history-tip,
 #clipboard-widget-compact .clipboard-file-summary {
-  white-space: nowrap;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  min-height: calc(1.35em * 2);
 }
 
 #clipboard-widget-compact .clipboard-inline-status {
@@ -4562,6 +4578,8 @@ body.overlay-open {
   gap: 16px;
   min-height: 0;
   overflow: hidden;
+  container-type: inline-size;
+  container-name: clipboard-modal-body;
 }
 
 .clipboard-workspace {
@@ -4569,7 +4587,7 @@ body.overlay-open {
   grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
   gap: var(--page-gap);
   min-height: 0;
-  align-items: start;
+  align-items: stretch;
 }
 
 .clipboard-editor-panel .clipboard-toolbar {
@@ -4580,7 +4598,19 @@ body.overlay-open {
   flex: 1 1 220px;
 }
 
-.clipboard-history-panel {
+#clipboard-modal .clipboard-editor-panel {
+  display: grid;
+  grid-template-rows: auto minmax(220px, 1fr) auto;
+  align-content: start;
+}
+
+#clipboard-modal .clipboard-file-panel-modal {
+  display: grid;
+  grid-template-rows: auto minmax(96px, auto) auto auto minmax(0, 1fr) auto;
+  align-content: start;
+}
+
+#clipboard-modal .clipboard-history-panel {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -4595,11 +4625,7 @@ body.overlay-open {
   overflow-y: auto;
 }
 
-@media (max-width: 1200px) {
-  .widgets-bar {
-    grid-template-columns: clamp(264px, 30vw, 320px) minmax(0, 1fr);
-  }
-
+@container clipboard-compact (max-width: 880px) {
   #clipboard-widget-compact {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto minmax(0, 1fr);
@@ -4608,6 +4634,44 @@ body.overlay-open {
       "text"
       "files"
       "history";
+  }
+
+  #clipboard-widget-compact .clipboard-card-history {
+    max-height: 220px;
+  }
+}
+
+@container clipboard-compact (max-width: 560px) {
+  #clipboard-widget-compact .clipboard-card-section,
+  #clipboard-widget-compact .clipboard-file-panel-compact,
+  #clipboard-widget-compact .clipboard-history-panel-compact {
+    padding: 11px;
+  }
+
+  #clipboard-widget-compact .clipboard-card-input {
+    height: 84px;
+    min-height: 84px;
+    max-height: 84px;
+  }
+
+  #clipboard-widget-compact .clipboard-dropzone {
+    min-height: 74px;
+  }
+
+  #clipboard-widget-compact .clipboard-card-history {
+    max-height: 168px;
+  }
+}
+
+@container clipboard-modal-body (max-width: 860px) {
+  .clipboard-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1200px) {
+  .widgets-bar {
+    grid-template-columns: clamp(264px, 30vw, 320px) minmax(0, 1fr);
   }
 
   .weather-details {
@@ -4718,20 +4782,6 @@ body.overlay-open {
     padding: 16px;
   }
 
-  #clipboard-widget-compact {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto minmax(0, 1fr);
-    grid-template-areas:
-      "head"
-      "text"
-      "files"
-      "history";
-  }
-
-  #clipboard-widget-compact .clipboard-card-history {
-    max-height: 180px;
-  }
-
   .settings-body {
     grid-template-columns: 1fr;
   }
@@ -4812,25 +4862,6 @@ body.overlay-open {
 
   .clipboard-history-entry {
     grid-template-columns: 1fr;
-  }
-
-  #clipboard-widget-compact .clipboard-card-input {
-    height: 82px;
-    min-height: 82px;
-    max-height: 82px;
-  }
-
-  #clipboard-widget-compact .clipboard-dropzone {
-    min-height: 72px;
-    max-height: 72px;
-  }
-
-  #clipboard-widget-compact .clipboard-pending-list {
-    max-height: 58px;
-  }
-
-  #clipboard-widget-compact .clipboard-card-history {
-    max-height: 156px;
   }
 
   .settings-body {

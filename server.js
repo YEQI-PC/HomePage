@@ -5,6 +5,7 @@ const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 const crypto = require('crypto');
+const createRuntimeManager = require('./server-runtime');
 
 const ROOT_DIR = __dirname;
 const STORAGE_DIR = path.join(ROOT_DIR, 'storage');
@@ -16,6 +17,13 @@ const APP_STATE_FILE = path.join(STORAGE_DIR, 'app-state.json');
 
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.PORT || 3000);
+const runtimeManager = createRuntimeManager({
+  appName: 'HomePage',
+  rootDir: ROOT_DIR,
+  storageDir: STORAGE_DIR,
+  host: HOST,
+  port: PORT,
+});
 
 const MAX_HISTORY_ITEMS = 40;
 const MAX_TEXT_LENGTH = 200000;
@@ -1280,7 +1288,8 @@ async function handleRequest(req, res) {
     }
 
     if (pathname.startsWith('/api/')) {
-      const handled = await handleClipboardApi(req, res, pathname);
+      const handled = await runtimeManager.handleApi(req, res, pathname, sendJson, sendError)
+        || await handleClipboardApi(req, res, pathname);
       if (!handled) {
         sendError(res, 404, 'API route not found');
       }
@@ -1301,15 +1310,33 @@ async function handleRequest(req, res) {
 }
 
 const server = http.createServer(handleRequest);
-
-server.listen(PORT, HOST, async () => {
-  await ensureStorage();
-  console.log(`HomePage server running at http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
-  console.log(`Clipboard data directory: ${CLIPBOARD_DIR}`);
-});
-
-setInterval(() => {
+const cleanupTimer = setInterval(() => {
   cleanupExpiredUploadSessions().catch(error => {
     console.error('[upload-cleanup]', error);
   });
-}, 15 * 60 * 1000).unref();
+}, 15 * 60 * 1000);
+
+cleanupTimer.unref();
+
+async function main() {
+  if (await runtimeManager.maybeHandleCli()) {
+    return;
+  }
+
+  await runtimeManager.ensureRuntimeStorage();
+  runtimeManager.setupLogging();
+  runtimeManager.installSignalHandlers(server);
+
+  await ensureStorage();
+
+  server.listen(PORT, HOST, async () => {
+    await ensureStorage();
+    runtimeManager.logReady();
+    console.log(`Clipboard data directory: ${CLIPBOARD_DIR}`);
+  });
+}
+
+main().catch(error => {
+  console.error('[startup]', error);
+  process.exit(1);
+});

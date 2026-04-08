@@ -4119,7 +4119,7 @@ const ClipboardHub = (() => {
   return { init, render };
 })();
 
-const ClipboardHubServer = (() => {
+const LegacyClipboardHubServer = (() => {
   const MAX_PREVIEW = 120;
   const DEFAULT_LIMITS = {
     maxHistoryItems: 40,

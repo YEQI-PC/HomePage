@@ -430,6 +430,24 @@
       </div>
     </div>
 
+    <div class="settings-section">
+      <h3 class="settings-section-title">后台服务</h3>
+      <div class="settings-stack">
+        <p class="settings-about-text" id="runtime-mode-status">正在检测后台服务状态...</p>
+        <div class="settings-row">
+          <button type="button" class="settings-action-btn primary" id="startup-install-btn">启用开机启动</button>
+          <button type="button" class="settings-action-btn" id="startup-remove-btn">关闭开机启动</button>
+        </div>
+        <div class="settings-row">
+          <button type="button" class="settings-action-btn" id="copy-bg-command-btn">复制后台启动命令</button>
+          <button type="button" class="settings-action-btn" id="copy-log-path-btn">复制日志路径</button>
+        </div>
+        <p class="settings-hint" id="runtime-startup-status">启用后会在系统登录时以后台方式启动服务。</p>
+        <p class="settings-hint" id="runtime-log-path">日志文件：检测中...</p>
+        <p class="settings-hint" id="runtime-bg-command-text">后台启动命令：检测中...</p>
+      </div>
+    </div>
+
     <div class="settings-section settings-section-wide">
       <h3 class="settings-section-title">快捷方式</h3>
       <div class="settings-row">
@@ -674,5 +692,6 @@
 <canvas id="color-canvas" style="display:none"></canvas>
 
 <script src="js/main.js"></script>
+<script src="js/clipboard-runtime.js"></script>
 </body>
 </html>

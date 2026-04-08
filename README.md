@@ -40,6 +40,22 @@ http://localhost:3000
 http://192.168.1.10:3000
 ```
 
+## Service Runtime
+
+- `npm run start:bg`
+  Launch the server as a detached background process.
+- `npm run startup:install`
+  Install a per-user Windows startup launcher so the service starts in the background after login.
+- `npm run startup:remove`
+  Remove the Windows startup launcher.
+- `npm run runtime:status`
+  Print the current runtime status, including launch mode and log path.
+
+Runtime artifacts:
+
+- Logs: `storage/logs/homepage-server.log`
+- Generated launchers: `storage/runtime/`
+
 ## 剪切板存储说明
 
 - 草稿输入框内容仍会暂存在当前浏览器，避免刷新时丢失正在编辑的内容。
