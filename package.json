@@ -1,0 +1,17 @@
+{
+  "name": "homepage-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal homepage with server-backed clipboard storage",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:bg": "node server.js --detach",
+    "startup:install": "node server.js --install-startup",
+    "startup:remove": "node server.js --remove-startup",
+    "runtime:status": "node server.js --runtime-status"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
